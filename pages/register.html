@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account — Iron Edge Fitness</title>
+<meta name="description" content="Create your free Iron Edge Fitness account to start tracking workouts, nutrition, and progress.">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+
+<style>
+  /* ---- Auth-page-scoped styles (kept local so Prompt-1 css/*.css files stay untouched) ---- */
+  body[data-page="login"], body[data-page="register"], body[data-page="forgot-password"] { overflow-x: hidden; }
+
+  .ie-auth-topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 28px;
+  }
+  .ie-auth-back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.85rem; color: var(--ie-text-muted);
+    border: 1px solid var(--ie-glass-border);
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(var(--ie-glass-blur));
+    padding: 9px 16px; border-radius: var(--ie-r-pill);
+    transition: color var(--ie-dur-fast), border-color var(--ie-dur-fast);
+  }
+  .ie-auth-back:hover { color: var(--ie-orange-400); border-color: var(--ie-orange-500); }
+
+  .ie-auth-shell {
+    min-height: 100svh;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .ie-auth-visual {
+    display: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .ie-auth-visual img {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(1.05) contrast(1.05);
+  }
+  .ie-auth-visual::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,9,8,0.35) 0%, rgba(10,9,8,0.55) 55%, rgba(10,9,8,0.95) 100%);
+  }
+  .ie-auth-visual__content {
+    position: relative; z-index: 2;
+    height: 100%;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 56px;
+  }
+  .ie-auth-quote {
+    padding: 24px;
+    max-width: 420px;
+  }
+  .ie-auth-quote p { font-size: 1.05rem; color: var(--ie-ink-dim); line-height: 1.6; }
+  .ie-auth-quote__meta { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+  .ie-auth-quote__avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--ie-gradient-brand); display: grid; place-items: center;
+    font-family: var(--ie-font-display); color: #150c04;
+  }
+  .ie-auth-stats { display: flex; gap: 28px; margin-top: 40px; }
+  .ie-auth-stats div strong { display: block; font-family: var(--ie-font-display); font-size: 1.8rem; color: var(--ie-orange-400); }
+  .ie-auth-stats div span { font-size: 0.78rem; color: var(--ie-ash); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .ie-auth-form-side {
+    display: flex; align-items: center; justify-content: center;
+    padding: 120px 24px 60px;
+    position: relative;
+  }
+  .ie-auth-form-side .ie-hero-glow { position: absolute; }
+
+  .ie-auth-card {
+    width: 100%; max-width: 440px;
+    padding: 40px 36px;
+    position: relative; z-index: 2;
+  }
+  .ie-auth-card__logo { display: flex; align-items: center; gap: 10px; font-family: var(--ie-font-display); font-size: 1.1rem; margin-bottom: 28px; }
+  .ie-auth-card__logo .ie-logo__mark { width: 34px; height: 34px; border-radius: 9px; background: var(--ie-gradient-brand); display: grid; place-items: center; color: #150c04; box-shadow: var(--ie-glow-orange); font-size: 1rem; }
+
+  .ie-auth-card h1 { font-size: clamp(1.7rem, 3vw, 2.1rem); margin-bottom: 8px; }
+  .ie-auth-card__sub { color: var(--ie-text-muted); font-size: 0.92rem; margin-bottom: 26px; }
+
+  .ie-form-banner {
+    display: none;
+    font-size: 0.85rem;
+    padding: 12px 16px;
+    border-radius: var(--ie-r-md);
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+  }
+  .ie-form-banner.is-visible { display: block; animation: ie-fade-up 0.3s var(--ie-ease) both; }
+  .ie-form-banner[data-type="error"] { background: rgba(255,84,89,0.1); border-color: rgba(255,84,89,0.35); color: #ffb3b5; }
+  .ie-form-banner[data-type="success"] { background: rgba(53,214,138,0.1); border-color: rgba(53,214,138,0.35); color: #9ae8c6; }
+
+  .ie-btn-google {
+    width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    height: 52px; border-radius: var(--ie-r-pill);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--ie-glass-border);
+    color: var(--ie-text);
+    font-weight: 600; font-size: 0.92rem;
+    transition: border-color var(--ie-dur-fast), transform var(--ie-dur-fast), background var(--ie-dur-fast);
+  }
+  .ie-btn-google:hover { border-color: var(--ie-orange-500); transform: translateY(-2px); }
+  .ie-btn-google i { color: #ea4335; font-size: 1rem; }
+
+  .ie-divider {
+    display: flex; align-items: center; gap: 14px;
+    margin: 24px 0;
+    font-size: 0.75rem; color: var(--ie-ash);
+    text-transform: uppercase; letter-spacing: 0.12em;
+  }
+  .ie-divider::before, .ie-divider::after { content: ''; flex: 1; height: 1px; background: var(--ie-line); }
+
+  .ie-field { margin-bottom: 18px; }
+  .ie-field label {
+    display: block; font-size: 0.8rem; font-weight: 600;
+    color: var(--ie-ink-dim); margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .ie-field__wrap { position: relative; display: flex; align-items: center; }
+  .ie-field__wrap i.ie-field__icon {
+    position: absolute; left: 16px; color: var(--ie-ash); font-size: 0.9rem; pointer-events: none;
+  }
+  .ie-field input {
+    width: 100%; height: 52px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--ie-glass-border);
+    border-radius: var(--ie-r-md);
+    color: var(--ie-text);
+    padding: 0 16px 0 42px;
+    font-size: 0.92rem;
+    transition: border-color var(--ie-dur-fast), background var(--ie-dur-fast);
+  }
+  .ie-field input:focus { border-color: var(--ie-orange-500); outline: none; background: rgba(255,106,0,0.04); }
+  .ie-field input::placeholder { color: var(--ie-ash-dark); }
+  .ie-field.has-password input { padding-right: 44px; }
+  .ie-field__toggle {
+    position: absolute; right: 14px; background: none; border: none; color: var(--ie-ash);
+    display: grid; place-items: center; width: 28px; height: 28px;
+  }
+  .ie-field__toggle:hover { color: var(--ie-orange-400); }
+  .ie-field__error {
+    display: block; min-height: 16px; font-size: 0.76rem; color: var(--ie-danger); margin-top: 6px;
+  }
+  .ie-field.has-error input { border-color: var(--ie-danger); }
+
+  .ie-strength { margin: -8px 0 18px; }
+  .ie-strength-track {
+    height: 5px; border-radius: 6px; background: var(--ie-surface-2); overflow: hidden;
+  }
+  .ie-strength-fill { height: 100%; width: 0%; border-radius: 6px; transition: width var(--ie-dur-fast), background var(--ie-dur-fast); }
+  .ie-strength-label { font-size: 0.72rem; color: var(--ie-ash); margin-top: 6px; display: block; }
+
+  .ie-checkbox-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 10px; }
+  .ie-checkbox {
+    display: flex; align-items: center; gap: 9px; font-size: 0.85rem; color: var(--ie-text-muted); cursor: pointer;
+  }
+  .ie-checkbox input {
+    width: 18px; height: 18px; accent-color: var(--ie-orange-500); cursor: pointer;
+  }
+  .ie-forgot-link { font-size: 0.85rem; color: var(--ie-orange-400); font-weight: 600; }
+  .ie-forgot-link:hover { text-decoration: underline; }
+
+  .ie-terms { font-size: 0.82rem; color: var(--ie-text-muted); }
+  .ie-terms a { color: var(--ie-orange-400); }
+
+  button[data-submit-btn] { width: 100%; position: relative; }
+  button[data-submit-btn] .ie-btn-label { display: inline-flex; align-items: center; gap: 10px; }
+  button[data-submit-btn] .ie-btn-spinner {
+    display: none; width: 18px; height: 18px; border-radius: 50%;
+    border: 2.5px solid rgba(21,12,4,0.35); border-top-color: #150c04;
+  }
+  button[data-submit-btn].is-loading .ie-btn-label { visibility: hidden; }
+  button[data-submit-btn].is-loading .ie-btn-spinner {
+    display: inline-block; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    animation: ie-spin 0.7s linear infinite;
+  }
+
+  .ie-auth-switch { text-align: center; margin-top: 24px; font-size: 0.88rem; color: var(--ie-text-muted); }
+  .ie-auth-switch a { color: var(--ie-orange-400); font-weight: 600; }
+  .ie-auth-switch a:hover { text-decoration: underline; }
+
+  .ie-forgot-success-icon {
+    display: none;
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(53,214,138,0.12); color: var(--ie-success);
+    align-items: center; justify-content: center; font-size: 1.6rem;
+    margin: 0 auto 18px;
+  }
+  #ie-forgot-form.is-sent .ie-forgot-fields { display: none; }
+  #ie-forgot-form.is-sent .ie-forgot-success-icon { display: flex; }
+
+  @media (min-width: 960px) {
+    .ie-auth-shell { grid-template-columns: 1.05fr 0.95fr; }
+    .ie-auth-visual { display: block; }
+  }
+</style>
+
+</head>
+<body data-page="register" data-components-base="../components/">
+
+  <div id="ie-loader-slot"></div>
+
+  <div class="ie-auth-topbar">
+    <a href="index.html" class="ie-auth-back"><i class="fa-solid fa-arrow-left"></i> Back to site</a>
+  </div>
+
+  <main class="ie-auth-shell">
+    <!-- Visual panel -->
+    <section class="ie-auth-visual">
+      <img src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&w=1400&q=80" alt="Person doing a weighted training session">
+      <div class="ie-auth-visual__content">
+        <div class="ie-auth-quote ie-glass" data-reveal>
+          <p>"Registration took two minutes. My first AI-built program was ready before I'd finished stretching."</p>
+          <div class="ie-auth-quote__meta">
+            <span class="ie-auth-quote__avatar">AT</span>
+            <div>
+              <p style="font-weight:700; font-size:0.9rem;">Aman Thakur</p>
+              <p style="font-size:0.78rem; color:var(--ie-ash);">Member since 2023</p>
+            </div>
+          </div>
+        </div>
+        <div class="ie-auth-stats">
+          <div><strong>15+</strong><span>Years</span></div>
+          <div><strong>24/7</strong><span>Support</span></div>
+          <div><strong>$49</strong><span>Elite / mo</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form panel -->
+    <section class="ie-auth-form-side">
+      <div class="ie-hero-glow g2 ie-anim-float-slow" style="bottom:-15%; left:-10%;"></div>
+      <div class="ie-glass ie-auth-card" data-reveal>
+        <a href="index.html" class="ie-auth-card__logo">
+          <span class="ie-logo__mark"><i class="fa-solid fa-bolt"></i></span>
+          IRON <span style="color:var(--ie-orange-400);">EDGE</span>
+        </a>
+
+        <h1>Create your account</h1>
+        <p class="ie-auth-card__sub">Start free — upgrade to Elite whenever you're ready.</p>
+
+        <div class="ie-form-banner" data-form-banner role="alert"></div>
+
+        <button type="button" class="ie-btn-google" id="ie-google-signup">
+          <i class="fa-brands fa-google"></i> Sign up with Google
+        </button>
+
+        <div class="ie-divider">or sign up with email</div>
+
+        <form id="ie-register-form" novalidate>
+          <div class="ie-field">
+            <label for="ie-register-name">Full name</label>
+            <div class="ie-field__wrap">
+              <i class="fa-solid fa-user ie-field__icon"></i>
+              <input type="text" id="ie-register-name" name="name" placeholder="Jordan Diaz" autocomplete="name" required>
+            </div>
+            <span class="ie-field__error"></span>
+          </div>
+
+          <div class="ie-field">
+            <label for="ie-register-email">Email address</label>
+            <div class="ie-field__wrap">
+              <i class="fa-solid fa-envelope ie-field__icon"></i>
+              <input type="email" id="ie-register-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+            <span class="ie-field__error"></span>
+          </div>
+
+          <div class="ie-field has-password">
+            <label for="ie-register-password">Password</label>
+            <div class="ie-field__wrap">
+              <i class="fa-solid fa-lock ie-field__icon"></i>
+              <input type="password" id="ie-register-password" name="password" placeholder="At least 8 characters" autocomplete="new-password" required>
+              <button type="button" class="ie-field__toggle" data-toggle-password="ie-register-password" aria-label="Show password">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <span class="ie-field__error"></span>
+          </div>
+
+          <div class="ie-strength">
+            <div class="ie-strength-track"><div class="ie-strength-fill" data-strength-meter></div></div>
+            <span class="ie-strength-label" data-strength-label></span>
+          </div>
+
+          <div class="ie-field has-password">
+            <label for="ie-register-confirm">Confirm password</label>
+            <div class="ie-field__wrap">
+              <i class="fa-solid fa-lock ie-field__icon"></i>
+              <input type="password" id="ie-register-confirm" name="confirm" placeholder="Re-enter your password" autocomplete="new-password" required>
+              <button type="button" class="ie-field__toggle" data-toggle-password="ie-register-confirm" aria-label="Show password">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <span class="ie-field__error"></span>
+          </div>
+
+          <div class="ie-checkbox-row">
+            <label class="ie-checkbox ie-terms">
+              <input type="checkbox" id="ie-register-terms">
+              I agree to the <a href="faq.html">Terms of Service</a> &amp; Privacy Policy
+            </label>
+          </div>
+
+          <button type="submit" class="ie-btn ie-btn-primary" data-submit-btn>
+            <span class="ie-btn-label"><i class="fa-solid fa-user-plus"></i> Create Account</span>
+            <span class="ie-btn-spinner"></span>
+          </button>
+        </form>
+
+        <p class="ie-auth-switch">Already have an account? <a href="login.html">Log in</a></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/main.js"></script>
+  <script type="module" src="../js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Cart — Iron Edge Fitness</title>
+<meta name="description" content="Review your cart, apply checkout details, and complete your Iron Edge Fitness shop order.">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/shop.css">
+
+<style>
+  /* ---- Cart-page-scoped styles (kept local; css/shop.css untouched) ---- */
+  #ie-cart-hero { padding-top: calc(var(--ie-nav-h) + 56px); padding-bottom: 24px; }
+  .ie-summary-line { display: flex; justify-content: space-between; padding: 10px 0; font-size: 0.88rem; color: var(--ie-text-muted); border-bottom: 1px solid var(--ie-line); }
+  .ie-summary-line span:last-child { color: var(--ie-text); font-weight: 600; }
+  .ie-summary-line--total { border-bottom: none; padding-top: 16px; }
+  .ie-summary-line--total span:first-child { color: var(--ie-text); font-weight: 700; font-size: 1rem; }
+  .ie-summary-line--total span:last-child { font-family: var(--ie-font-display); font-size: 1.5rem; color: var(--ie-orange-400); }
+</style>
+
+</head>
+<body data-page="cart" data-components-base="../components/">
+
+  <div id="ie-loader-slot"></div>
+  <div id="ie-navbar-slot"></div>
+
+  <main>
+    <section id="ie-cart-hero">
+      <div class="ie-container">
+        <p class="ie-eyebrow" data-reveal>Checkout</p>
+        <h1 class="ie-heading-lg" data-reveal>Your <span class="ie-text-gradient">cart</span></h1>
+      </div>
+    </section>
+
+    <section class="ie-section" style="padding-top:12px;">
+      <div class="ie-container">
+
+        <!-- ============================== CART VIEW ============================== -->
+        <div id="ie-cart-view">
+          <div class="ie-cart-grid">
+            <div class="ie-glass" id="ie-cart-items-panel" data-reveal style="padding:10px;">
+              <!-- Cart item rows or empty state injected by js/shop.js -->
+              <div class="ie-empty-cart">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <p>Loading your cart…</p>
+              </div>
+            </div>
+
+            <div class="ie-glass ie-cart-summary" data-reveal>
+              <h3 style="font-size:1.15rem; font-family:var(--ie-font-body); font-weight:700; text-transform:none; margin-bottom:18px;">Order Summary</h3>
+              <div class="ie-summary-line"><span>Subtotal</span><span id="ie-cart-subtotal">$0.00</span></div>
+              <div class="ie-summary-line"><span>Shipping</span><span id="ie-cart-shipping">$0.00</span></div>
+              <div class="ie-summary-line ie-summary-line--total"><span>Total</span><span id="ie-cart-total">$0.00</span></div>
+
+              <button type="button" class="ie-btn ie-btn-primary" id="ie-proceed-checkout-btn" style="width:100%; margin-top:20px;">
+                <i class="fa-solid fa-lock"></i> Proceed to Checkout
+              </button>
+              <a href="shop.html" class="ie-btn ie-btn-ghost" style="width:100%; margin-top:10px;">
+                <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================== CHECKOUT FORM VIEW ========================== -->
+        <div id="ie-cart-checkout-view" class="is-hidden">
+          <div class="ie-cart-grid">
+            <div class="ie-glass" style="padding:32px;" data-reveal>
+              <h2 style="font-size:1.3rem; margin-bottom:22px;">Shipping &amp; payment</h2>
+              <div class="ie-form-banner" data-form-banner role="alert"></div>
+
+              <form id="ie-shop-checkout-form" novalidate>
+                <div class="ie-field-row ie-field-row--2">
+                  <div class="ie-field">
+                    <label for="ie-ship-name">Full name</label>
+                    <div class="ie-field__wrap">
+                      <i class="fa-solid fa-user ie-field__icon"></i>
+                      <input type="text" id="ie-ship-name" placeholder="Jordan Diaz" autocomplete="name" required>
+                    </div>
+                    <span class="ie-field__error"></span>
+                  </div>
+                  <div class="ie-field">
+                    <label for="ie-ship-email">Email</label>
+                    <div class="ie-field__wrap">
+                      <i class="fa-solid fa-envelope ie-field__icon"></i>
+                      <input type="email" id="ie-ship-email" placeholder="you@example.com" autocomplete="email" required>
+                    </div>
+                    <span class="ie-field__error"></span>
+                  </div>
+                </div>
+
+                <div class="ie-field">
+                  <label for="ie-ship-address">Shipping address</label>
+                  <div class="ie-field__wrap">
+                    <i class="fa-solid fa-location-dot ie-field__icon"></i>
+                    <input type="text" id="ie-ship-address" placeholder="Street address" autocomplete="street-address" required>
+                  </div>
+                  <span class="ie-field__error"></span>
+                </div>
+
+                <div class="ie-field-row ie-field-row--3">
+                  <div class="ie-field">
+                    <label for="ie-ship-city">City</label>
+                    <div class="ie-field__wrap">
+                      <i class="fa-solid fa-city ie-field__icon"></i>
+                      <input type="text" id="ie-ship-city" placeholder="Coimbatore" autocomplete="address-level2" required>
+                    </div>
+                    <span class="ie-field__error"></span>
+                  </div>
+                  <div class="ie-field">
+                    <label for="ie-ship-zip">ZIP / Postal</label>
+                    <div class="ie-field__wrap">
+                      <i class="fa-solid fa-map-pin ie-field__icon"></i>
+                      <input type="text" id="ie-ship-zip" placeholder="641001" autocomplete="postal-code" required>
+                    </div>
+                    <span class="ie-field__error"></span>
+                  </div>
+                  <div class="ie-field">
+                    <label for="ie-ship-country">Country</label>
+                    <div class="ie-field__wrap">
+                      <i class="fa-solid fa-globe ie-field__icon"></i>
+                      <input type="text" id="ie-ship-country" placeholder="India" autocomplete="country-name" required>
+                    </div>
+                    <span class="ie-field__error"></span>
+                  </div>
+                </div>
+
+                <div class="ie-field">
+                  <label for="ie-ship-card">Card number</label>
+                  <div class="ie-field__wrap">
+                    <i class="fa-solid fa-credit-card ie-field__icon"></i>
+                    <input type="text" id="ie-ship-card" placeholder="1234 5678 9012 3456" inputmode="numeric" maxlength="19" autocomplete="cc-number" required>
+                  </div>
+                  <span class="ie-field__error"></span>
+                </div>
+
+                <div class="ie-field-row ie-field-row--2">
+                  <div class="ie-field">
+                    <label for="ie-ship-expiry">Expiry (MM/YY)</label>
+                    <div class="ie-field__wrap">
+                      <i class="fa-solid fa-calendar ie-field__icon"></i>
+                      <input type="text" id="ie-ship-expiry" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp" required>
+                    </div>
+                    <span class="ie-field__error"></span>
+                  </div>
+                  <div class="ie-field">
+                    <label for="ie-ship-cvv">CVV</label>
+                    <div class="ie-field__wrap">
+                      <i class="fa-solid fa-lock ie-field__icon"></i>
+                      <input type="password" id="ie-ship-cvv" placeholder="123" maxlength="4" inputmode="numeric" autocomplete="cc-csc" required>
+                    </div>
+                    <span class="ie-field__error"></span>
+                  </div>
+                </div>
+
+                <button type="submit" class="ie-btn ie-btn-primary" data-submit-btn style="width:100%;">
+                  <span class="ie-btn-label"><i class="fa-solid fa-bag-shopping"></i> Place Order — <span id="ie-checkout-btn-total">$0.00</span></span>
+                  <span class="ie-btn-spinner"></span>
+                </button>
+                <button type="button" class="ie-btn ie-btn-ghost" id="ie-back-to-cart-btn" style="width:100%; margin-top:10px;">
+                  <i class="fa-solid fa-arrow-left"></i> Back to Cart
+                </button>
+              </form>
+            </div>
+
+            <div class="ie-glass ie-cart-summary" data-reveal>
+              <h3 style="font-size:1.15rem; font-family:var(--ie-font-body); font-weight:700; text-transform:none; margin-bottom:18px;">Order Summary</h3>
+              <div id="ie-checkout-summary-lines"></div>
+              <div class="ie-summary-line ie-summary-line--total"><span>Total</span><span id="ie-checkout-total">$0.00</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================= ORDER CONFIRMATION VIEW ========================= -->
+        <div id="ie-order-confirmation" class="ie-glass">
+          <div class="ie-success-icon"><i class="fa-solid fa-check"></i></div>
+          <h2 class="ie-heading-md">Order placed!</h2>
+          <p class="ie-lead" style="margin-inline:auto; text-align:center;">
+            Thanks for the order — a confirmation has been sent to your email.
+          </p>
+          <div class="ie-success-summary">
+            <div class="ie-summary-line"><span>Order ID</span><span id="ie-confirm-order-id">—</span></div>
+            <div class="ie-summary-line"><span>Items</span><span id="ie-confirm-items">—</span></div>
+            <div class="ie-summary-line ie-summary-line--total"><span>Total Paid</span><span id="ie-confirm-total">$0.00</span></div>
+          </div>
+          <div class="ie-success-actions">
+            <button type="button" class="ie-btn ie-btn-primary" id="ie-confirm-download-invoice">
+              <i class="fa-solid fa-download"></i> Download Invoice
+            </button>
+            <a href="shop.html" class="ie-btn ie-btn-ghost">Continue Shopping</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================== ORDER HISTORY ============================== -->
+    <section class="ie-section" style="padding-top:0;">
+      <div class="ie-container">
+        <div class="ie-section-head">
+          <div>
+            <p class="ie-eyebrow">Records</p>
+            <h2 class="ie-heading-lg">Order <span class="ie-text-gradient">history</span></h2>
+          </div>
+        </div>
+        <div class="ie-glass" data-reveal style="padding:8px;" id="ie-order-history-panel">
+          <div class="ie-empty-cart">
+            <i class="fa-solid fa-receipt"></i>
+            <p>Log in to see your past orders.</p>
+            <a href="login.html" class="ie-btn ie-btn-primary">Log In</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="ie-footer-slot"></div>
+  <div id="ie-chat-slot"></div>
+
+  <div id="ie-toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="ie-toast-text">Updated cart</span>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/shop.js"></script>
+</body>
+</html>

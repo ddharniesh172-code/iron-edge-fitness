@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Membership Plans — Iron Edge Fitness</title>
+<meta name="description" content="Compare Iron Edge Fitness membership plans — Basic, Standard, Premium and VIP — monthly, quarterly or yearly, and manage your active membership.">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+
+<style>
+  /* ---- Membership-page-scoped styles (kept local; css/*.css untouched) ---- */
+
+  #ie-membership-hero {
+    padding-top: calc(var(--ie-nav-h) + 64px);
+    padding-bottom: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #ie-membership-hero .ie-hero-glow { position: absolute; }
+
+  /* ---- Duration toggle ---- */
+  .ie-duration-toggle {
+    display: inline-flex;
+    gap: 4px;
+    padding: 6px;
+    margin: 28px auto 0;
+    border-radius: var(--ie-r-pill);
+  }
+  .ie-duration-toggle button {
+    position: relative;
+    border: none;
+    background: transparent;
+    color: var(--ie-text-muted);
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 11px 22px;
+    border-radius: var(--ie-r-pill);
+    transition: color var(--ie-dur-fast), background var(--ie-dur-fast);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .ie-duration-toggle button.is-active {
+    background: var(--ie-gradient-brand);
+    color: #150c04;
+    box-shadow: var(--ie-glow-orange);
+  }
+  .ie-duration-toggle button .ie-save-tag {
+    font-size: 0.68rem;
+    background: rgba(53, 214, 138, 0.16);
+    color: var(--ie-success);
+    padding: 2px 7px;
+    border-radius: var(--ie-r-pill);
+  }
+  .ie-duration-toggle button.is-active .ie-save-tag { background: rgba(21,12,4,0.18); color: #150c04; }
+
+  /* ---- Pricing grid ---- */
+  .ie-pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px;
+  }
+  .ie-price-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 28px;
+    isolation: isolate;
+  }
+  .ie-price-card--highlight {
+    border-color: var(--ie-orange-600);
+    box-shadow: var(--ie-shadow-3), var(--ie-glow-orange);
+    transform: translateY(-6px) scale(1.02);
+  }
+  .ie-price-card__badge {
+    position: absolute;
+    top: -14px; left: 50%; transform: translateX(-50%);
+    background: var(--ie-gradient-brand);
+    color: #150c04;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: var(--ie-r-pill);
+    box-shadow: var(--ie-glow-orange);
+    white-space: nowrap;
+  }
+  .ie-price-card__name { font-size: 1.5rem; }
+  .ie-price-card__tagline { font-size: 0.85rem; color: var(--ie-text-muted); margin-top: 4px; }
+  .ie-price-card__price-row { display: flex; align-items: baseline; gap: 6px; margin: 22px 0 4px; }
+  .ie-price-card__price { font-family: var(--ie-font-display); font-size: 2.6rem; color: var(--ie-orange-400); }
+  .ie-price-card__period { font-size: 0.85rem; color: var(--ie-text-muted); }
+  .ie-price-card__permonth { font-size: 0.78rem; color: var(--ie-ash); margin-bottom: 22px; min-height: 16px; }
+
+  .ie-price-card__features { display: flex; flex-direction: column; gap: 12px; margin-bottom: 26px; flex: 1; }
+  .ie-price-card__features li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.87rem; }
+  .ie-price-card__features li .ie-feat-icon { width: 18px; flex-shrink: 0; margin-top: 2px; }
+  .ie-price-card__features li.is-included { color: var(--ie-ink-dim); }
+  .ie-price-card__features li.is-included .ie-feat-icon { color: var(--ie-success); }
+  .ie-price-card__features li.is-excluded { color: var(--ie-ash-dark); }
+  .ie-price-card__features li.is-excluded .ie-feat-icon { color: var(--ie-ash-dark); }
+
+  .ie-choose-plan-btn { width: 100%; }
+
+  /* ---- Compare table ---- */
+  .ie-compare-wrap { overflow-x: auto; border-radius: var(--ie-r-lg); }
+  table.ie-compare-table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    font-size: 0.87rem;
+  }
+  .ie-compare-table th, .ie-compare-table td {
+    padding: 16px 18px;
+    text-align: center;
+    border-bottom: 1px solid var(--ie-line);
+  }
+  .ie-compare-table th:first-child, .ie-compare-table td:first-child { text-align: left; color: var(--ie-ink-dim); }
+  .ie-compare-table thead th {
+    font-family: var(--ie-font-body);
+    text-transform: none;
+    font-weight: 700;
+    color: var(--ie-text);
+    background: rgba(255,255,255,0.02);
+  }
+  .ie-compare-table tbody tr:hover { background: rgba(255,106,0,0.04); }
+  .ie-compare-table i.fa-check { color: var(--ie-success); }
+  .ie-compare-table i.fa-xmark { color: var(--ie-ash-dark); }
+
+  /* ---- Membership status ---- */
+  .ie-status-card { padding: 32px; }
+  .ie-status-card__top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+  .ie-status-badge {
+    font-family: var(--ie-font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border-radius: var(--ie-r-pill);
+    border: 1px solid;
+  }
+  .ie-status-badge[data-state="active"] { color: var(--ie-success); border-color: rgba(53,214,138,0.4); background: rgba(53,214,138,0.08); }
+  .ie-status-badge[data-state="expired"] { color: var(--ie-danger); border-color: rgba(255,84,89,0.4); background: rgba(255,84,89,0.08); }
+  .ie-status-badge[data-state="none"] { color: var(--ie-ash); border-color: var(--ie-line); background: rgba(255,255,255,0.03); }
+
+  .ie-status-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-bottom: 24px; }
+  .ie-status-metric { background: rgba(255,255,255,0.03); border: 1px solid var(--ie-line); border-radius: var(--ie-r-md); padding: 16px 18px; }
+  .ie-status-metric__label { font-size: 0.74rem; color: var(--ie-ash); text-transform: uppercase; letter-spacing: 0.06em; }
+  .ie-status-metric__value { font-family: var(--ie-font-mono); font-size: 1.2rem; margin-top: 6px; color: var(--ie-text); }
+
+  .ie-expiry-track { height: 8px; border-radius: 8px; background: var(--ie-surface-2); overflow: hidden; margin-bottom: 8px; border: 1px solid var(--ie-line); }
+  .ie-expiry-fill { height: 100%; background: var(--ie-gradient-brand); border-radius: 8px; width: 0%; transition: width 1s var(--ie-ease); }
+  .ie-expiry-caption { font-size: 0.78rem; color: var(--ie-ash); }
+
+  .ie-empty-state { text-align: center; padding: 40px 20px; }
+  .ie-empty-state i { font-size: 2rem; color: var(--ie-orange-400); margin-bottom: 14px; }
+  .ie-empty-state p { color: var(--ie-text-muted); margin-bottom: 20px; }
+
+  /* ---- History table ---- */
+  .ie-history-wrap { overflow-x: auto; }
+  table.ie-history-table { width: 100%; min-width: 640px; border-collapse: collapse; font-size: 0.85rem; }
+  .ie-history-table th, .ie-history-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--ie-line); }
+  .ie-history-table thead th { color: var(--ie-ash); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.06em; font-weight: 600; }
+  .ie-history-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+  .ie-history-status { font-size: 0.72rem; padding: 4px 10px; border-radius: var(--ie-r-pill); text-transform: uppercase; letter-spacing: 0.04em; }
+  .ie-history-status[data-status="paid"] { background: rgba(53,214,138,0.12); color: var(--ie-success); }
+  .ie-history-status[data-status="failed"] { background: rgba(255,84,89,0.12); color: var(--ie-danger); }
+  .ie-download-invoice-btn {
+    background: none; border: 1px solid var(--ie-glass-border); color: var(--ie-orange-400);
+    border-radius: var(--ie-r-pill); padding: 7px 14px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 6px;
+    transition: border-color var(--ie-dur-fast), background var(--ie-dur-fast);
+  }
+  .ie-download-invoice-btn:hover { border-color: var(--ie-orange-500); background: rgba(255,106,0,0.08); }
+
+  .ie-skeleton-row td { color: var(--ie-ash-dark); font-style: italic; }
+
+  @media (min-width: 720px) {
+    .ie-pricing-grid { grid-template-columns: repeat(2, 1fr); }
+    .ie-status-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (min-width: 1180px) {
+    .ie-pricing-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+</style>
+
+</head>
+<body data-page="membership" data-components-base="../components/">
+
+  <div id="ie-loader-slot"></div>
+  <div id="ie-navbar-slot"></div>
+
+  <main>
+    <!-- ============================= HERO / TOGGLE ============================= -->
+    <section id="ie-membership-hero">
+      <div class="ie-hero-glow g1 ie-anim-float-slow" style="top:-10%; right:5%;"></div>
+      <div class="ie-hero-glow g2 ie-anim-float-slow" style="bottom:-30%; left:-5%;"></div>
+      <div class="ie-container">
+        <p class="ie-eyebrow" style="justify-content:center;" data-reveal>Membership</p>
+        <h1 class="ie-heading-xl" data-reveal>Pick the plan that <span class="ie-text-gradient">fits your grind</span></h1>
+        <p class="ie-lead" style="margin-inline:auto; text-align:center;" data-reveal>
+          Every plan includes gym floor access. Upgrade for AI coaching, nutrition tracking, and real trainer time.
+        </p>
+
+        <div class="ie-glass ie-duration-toggle" role="tablist" aria-label="Billing duration" data-reveal>
+          <button type="button" role="tab" data-duration="monthly" class="is-active" aria-selected="true">Monthly</button>
+          <button type="button" role="tab" data-duration="quarterly" aria-selected="false">Quarterly <span class="ie-save-tag">Save 10%</span></button>
+          <button type="button" role="tab" data-duration="yearly" aria-selected="false">Yearly <span class="ie-save-tag">Save 20%</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== PRICING CARDS ============================== -->
+    <section class="ie-section" style="padding-top:48px;">
+      <div class="ie-container">
+        <div class="ie-pricing-grid">
+
+          <!-- BASIC -->
+          <div class="ie-glass ie-card ie-price-card" data-plan="basic"
+               data-price-monthly="19" data-price-quarterly="51.3" data-price-yearly="182.4" data-reveal>
+            <h3 class="ie-price-card__name">Basic</h3>
+            <p class="ie-price-card__tagline">Get moving</p>
+            <div class="ie-price-card__price-row">
+              <span class="ie-price-card__price">$<span class="ie-price-card__amount">19</span></span>
+              <span class="ie-price-card__period">/ mo</span>
+            </div>
+            <p class="ie-price-card__permonth">&nbsp;</p>
+            <ul class="ie-price-card__features">
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Gym floor access</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Locker room access</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> BMI / BMR / Calorie tools</li>
+              <li class="is-excluded"><i class="fa-solid fa-xmark ie-feat-icon"></i> AI Workout Planner</li>
+              <li class="is-excluded"><i class="fa-solid fa-xmark ie-feat-icon"></i> Diet Planner</li>
+              <li class="is-excluded"><i class="fa-solid fa-xmark ie-feat-icon"></i> Personal training sessions</li>
+              <li class="is-excluded"><i class="fa-solid fa-xmark ie-feat-icon"></i> Priority booking</li>
+              <li class="is-excluded"><i class="fa-solid fa-xmark ie-feat-icon"></i> 1-on-1 trainer chat</li>
+            </ul>
+            <button type="button" class="ie-btn ie-btn-ghost ie-choose-plan-btn" data-choose-plan="basic">Choose Basic</button>
+          </div>
+
+          <!-- STANDARD -->
+          <div class="ie-glass ie-card ie-price-card" data-plan="standard"
+               data-price-monthly="35" data-price-quarterly="94.5" data-price-yearly="336" data-reveal>
+            <h3 class="ie-price-card__name">Standard</h3>
+            <p class="ie-price-card__tagline">Train with a plan</p>
+            <div class="ie-price-card__price-row">
+              <span class="ie-price-card__price">$<span class="ie-price-card__amount">35</span></span>
+              <span class="ie-price-card__period">/ mo</span>
+            </div>
+            <p class="ie-price-card__permonth">&nbsp;</p>
+            <ul class="ie-price-card__features">
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Gym floor access</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Locker room access</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> BMI / BMR / Calorie tools</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> AI Workout Planner</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Diet Planner</li>
+              <li class="is-excluded"><i class="fa-solid fa-xmark ie-feat-icon"></i> Personal training sessions</li>
+              <li class="is-excluded"><i class="fa-solid fa-xmark ie-feat-icon"></i> Priority booking</li>
+              <li class="is-excluded"><i class="fa-solid fa-xmark ie-feat-icon"></i> 1-on-1 trainer chat</li>
+            </ul>
+            <button type="button" class="ie-btn ie-btn-ghost ie-choose-plan-btn" data-choose-plan="standard">Choose Standard</button>
+          </div>
+
+          <!-- PREMIUM (highlight) -->
+          <div class="ie-glass ie-card ie-price-card ie-price-card--highlight" data-plan="premium"
+               data-price-monthly="49" data-price-quarterly="132.3" data-price-yearly="470.4" data-reveal>
+            <span class="ie-price-card__badge">Most Popular</span>
+            <h3 class="ie-price-card__name">Premium</h3>
+            <p class="ie-price-card__tagline">Most popular</p>
+            <div class="ie-price-card__price-row">
+              <span class="ie-price-card__price">$<span class="ie-price-card__amount">49</span></span>
+              <span class="ie-price-card__period">/ mo</span>
+            </div>
+            <p class="ie-price-card__permonth">&nbsp;</p>
+            <ul class="ie-price-card__features">
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Gym floor access</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Locker room access</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> BMI / BMR / Calorie tools</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> AI Workout Planner</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Diet Planner</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> 2 personal training sessions / mo</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Priority booking</li>
+              <li class="is-excluded"><i class="fa-solid fa-xmark ie-feat-icon"></i> 1-on-1 trainer chat</li>
+            </ul>
+            <button type="button" class="ie-btn ie-btn-primary ie-choose-plan-btn" data-choose-plan="premium">Choose Premium</button>
+          </div>
+
+          <!-- VIP -->
+          <div class="ie-glass ie-card ie-price-card" data-plan="vip"
+               data-price-monthly="89" data-price-quarterly="240.3" data-price-yearly="854.4" data-reveal>
+            <span class="ie-price-card__badge" style="background:linear-gradient(135deg,#ffb347,#c94e00);">Best Value</span>
+            <h3 class="ie-price-card__name">VIP</h3>
+            <p class="ie-price-card__tagline">All access</p>
+            <div class="ie-price-card__price-row">
+              <span class="ie-price-card__price">$<span class="ie-price-card__amount">89</span></span>
+              <span class="ie-price-card__period">/ mo</span>
+            </div>
+            <p class="ie-price-card__permonth">&nbsp;</p>
+            <ul class="ie-price-card__features">
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Gym floor access</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Locker room access</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> BMI / BMR / Calorie tools</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> AI Workout Planner</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Diet Planner</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Unlimited personal training</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> Priority booking</li>
+              <li class="is-included"><i class="fa-solid fa-check ie-feat-icon"></i> 1-on-1 trainer chat</li>
+            </ul>
+            <button type="button" class="ie-btn ie-btn-ghost ie-choose-plan-btn" data-choose-plan="vip">Choose VIP</button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== COMPARE PLANS ============================== -->
+    <section class="ie-section">
+      <div class="ie-container">
+        <div class="ie-section-head">
+          <div>
+            <p class="ie-eyebrow">Side By Side</p>
+            <h2 class="ie-heading-lg">Compare <span class="ie-text-gradient">every plan</span></h2>
+          </div>
+        </div>
+
+        <div class="ie-glass ie-compare-wrap" data-reveal>
+          <table class="ie-compare-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Basic</th>
+                <th>Standard</th>
+                <th>Premium</th>
+                <th>VIP</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Gym floor access</td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+              </tr>
+              <tr>
+                <td>Locker room access</td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+              </tr>
+              <tr>
+                <td>BMI / BMR / Calorie tools</td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+              </tr>
+              <tr>
+                <td>AI Workout Planner</td>
+                <td><i class="fa-solid fa-xmark"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+              </tr>
+              <tr>
+                <td>Diet Planner</td>
+                <td><i class="fa-solid fa-xmark"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+              </tr>
+              <tr>
+                <td>Personal training sessions</td>
+                <td>—</td>
+                <td>—</td>
+                <td>2 / month</td>
+                <td>Unlimited</td>
+              </tr>
+              <tr>
+                <td>Priority booking</td>
+                <td><i class="fa-solid fa-xmark"></i></td>
+                <td><i class="fa-solid fa-xmark"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+              </tr>
+              <tr>
+                <td>1-on-1 trainer chat</td>
+                <td><i class="fa-solid fa-xmark"></i></td>
+                <td><i class="fa-solid fa-xmark"></i></td>
+                <td><i class="fa-solid fa-xmark"></i></td>
+                <td><i class="fa-solid fa-check"></i></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== YOUR MEMBERSHIP ============================== -->
+    <section class="ie-section">
+      <div class="ie-container">
+        <div class="ie-section-head">
+          <div>
+            <p class="ie-eyebrow">Account</p>
+            <h2 class="ie-heading-lg">Your <span class="ie-text-gradient">membership</span></h2>
+          </div>
+        </div>
+
+        <div class="ie-glass ie-status-card" id="ie-membership-status" data-reveal>
+          <!-- Populated by js/membership.js. Static fallback shown until JS runs / for logged-out users. -->
+          <div class="ie-empty-state">
+            <i class="fa-solid fa-lock"></i>
+            <p>Log in to view your membership status, expiry, and history.</p>
+            <a href="login.html" class="ie-btn ie-btn-primary">Log In</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== HISTORY ============================== -->
+    <section class="ie-section" style="padding-top:0;">
+      <div class="ie-container">
+        <div class="ie-section-head">
+          <div>
+            <p class="ie-eyebrow">Records</p>
+            <h2 class="ie-heading-lg">Membership <span class="ie-text-gradient">history</span></h2>
+          </div>
+        </div>
+
+        <div class="ie-glass" data-reveal style="padding:8px;">
+          <div class="ie-history-wrap">
+            <table class="ie-history-table">
+              <thead>
+                <tr>
+                  <th>Invoice</th>
+                  <th>Plan</th>
+                  <th>Billing</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="ie-history-body">
+                <tr class="ie-skeleton-row"><td colspan="7">Log in to see your payment history.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="ie-footer-slot"></div>
+  <div id="ie-chat-slot"></div>
+
+  <!-- Vendor: AOS + jsPDF (for downloadable invoices) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script src="../js/main.js"></script>
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/membership.js"></script>
+</body>
+</html>

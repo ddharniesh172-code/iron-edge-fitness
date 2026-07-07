@@ -1,0 +1,448 @@
+/* ============================================================
+   IRON EDGE FITNESS — diet.css
+   Diet Planner & Nutrition Calculator Module
+   Extends variables and .glass-card from workout.css — load
+   workout.css BEFORE this file on every page that uses it.
+   ============================================================ */
+
+/* ============================================================
+   GOAL STRIP (diet-planner.html)
+   ============================================================ */
+.ie-goal-section { padding-top: 0; }
+
+.ie-goal-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 20px;
+  padding: 24px;
+}
+
+.ie-goal-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 170px;
+}
+.ie-goal-item label {
+  font-size: 0.75rem;
+  color: var(--ie-gray);
+  font-weight: 500;
+}
+.ie-goal-item select,
+.ie-goal-item input {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--ie-border);
+  color: var(--ie-white);
+  padding: 11px 14px;
+  border-radius: var(--ie-radius-sm);
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color var(--ie-transition);
+}
+.ie-goal-item select:focus,
+.ie-goal-item input:focus { border-color: var(--ie-orange); }
+
+.ie-goal-hint {
+  color: var(--ie-gray-dim);
+  font-size: 0.82rem;
+  margin-top: 12px;
+  text-align: center;
+}
+.ie-goal-hint a { color: var(--ie-orange); font-weight: 600; }
+.ie-goal-hint a:hover { text-decoration: underline; }
+
+/* ============================================================
+   DASHBOARD GRID
+   ============================================================ */
+.ie-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 1fr;
+  gap: 22px;
+  align-items: stretch;
+}
+
+/* Calorie Ring */
+.ie-ring-card {
+  position: relative;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+}
+.ie-ring-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+.ie-ring-center span {
+  display: block;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: var(--ie-orange);
+  letter-spacing: 1px;
+}
+.ie-ring-center small { color: var(--ie-gray); font-size: 0.78rem; }
+
+/* Macro Cards */
+.ie-macro-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  justify-content: center;
+}
+.ie-macro-card {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ie-macro-bar-wrap {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.ie-macro-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+.ie-macro-bar.protein { background: linear-gradient(90deg, #ff6a00, #ff9142); }
+.ie-macro-bar.carbs { background: linear-gradient(90deg, #2ee6a6, #7cf5cb); }
+.ie-macro-bar.fat { background: linear-gradient(90deg, #ffc857, #ffe08a); }
+.ie-macro-label { font-size: 0.85rem; font-weight: 600; color: var(--ie-white); }
+.ie-macro-value { font-size: 0.78rem; color: var(--ie-gray); }
+
+/* Water Card */
+.ie-water-card { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.ie-water-glasses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.ie-water-glass {
+  width: 30px;
+  height: 38px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 0 0 8px 8px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.03);
+  transition: all var(--ie-transition);
+}
+.ie-water-glass.filled {
+  background: linear-gradient(180deg, rgba(46,150,230,0.15), rgba(46,150,230,0.55));
+  border-color: rgba(46,150,230,0.6);
+}
+.ie-water-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.ie-water-actions .ie-icon-btn { width: 36px; height: 36px; }
+#waterAmountLabel { font-weight: 700; color: var(--ie-orange); min-width: 70px; text-align: center; }
+
+/* ============================================================
+   MEAL PLANNER GRID
+   ============================================================ */
+.ie-meal-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.ie-meal-col { padding: 18px; display: flex; flex-direction: column; gap: 12px; min-height: 260px; }
+.ie-meal-col-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ie-border);
+}
+.ie-meal-col-head i { color: var(--ie-orange); font-size: 1.1rem; }
+.ie-meal-col-head h3 { font-size: 1rem; flex: 1; }
+.ie-meal-cal { font-size: 0.75rem; color: var(--ie-orange-light); font-weight: 700; }
+
+.ie-meal-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+.ie-meal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--ie-radius-sm);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--ie-border);
+  font-size: 0.82rem;
+}
+.ie-meal-item-info { display: flex; flex-direction: column; }
+.ie-meal-item-name { font-weight: 600; }
+.ie-meal-item-meta { color: var(--ie-gray-dim); font-size: 0.72rem; }
+.ie-meal-item-remove {
+  background: none;
+  border: none;
+  color: var(--ie-gray);
+  cursor: pointer;
+  padding: 4px;
+  transition: color var(--ie-transition);
+}
+.ie-meal-item-remove:hover { color: var(--ie-danger); }
+
+.ie-add-food-btn {
+  background: var(--ie-black-card);
+  border: 1px dashed var(--ie-border);
+  color: var(--ie-gray);
+  padding: 10px;
+  border-radius: var(--ie-radius-sm);
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all var(--ie-transition);
+}
+.ie-add-food-btn:hover { border-color: var(--ie-orange); color: var(--ie-orange); border-style: solid; }
+
+/* ============================================================
+   FOOD SEARCH MODAL
+   ============================================================ */
+.ie-modal-lg { max-width: 620px; text-align: left; }
+.ie-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--ie-gray);
+  transition: all var(--ie-transition);
+}
+.ie-modal-close:hover { background: var(--ie-orange); color: #000; }
+.ie-modal-lg h3 { display: flex; align-items: center; gap: 10px; font-size: 1.15rem; }
+.ie-modal-lg h3 i { color: var(--ie-orange); }
+
+.ie-food-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.ie-food-results {
+  max-height: 360px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 4px;
+}
+.ie-food-result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: var(--ie-radius-sm);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--ie-border);
+  cursor: pointer;
+  transition: all var(--ie-transition);
+}
+.ie-food-result-item:hover { border-color: var(--ie-orange); background: rgba(255,106,0,0.05); }
+.ie-food-result-name { font-weight: 600; font-size: 0.9rem; }
+.ie-food-result-meta { font-size: 0.74rem; color: var(--ie-gray-dim); }
+.ie-food-result-cal { color: var(--ie-orange-light); font-weight: 700; font-size: 0.85rem; }
+
+/* ============================================================
+   NUTRITION FACTS MODAL
+   ============================================================ */
+.ie-serving-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0;
+}
+.ie-serving-row label { font-size: 0.85rem; color: var(--ie-gray); }
+.ie-serving-row input {
+  width: 90px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--ie-border);
+  color: var(--ie-white);
+  padding: 8px 10px;
+  border-radius: var(--ie-radius-sm);
+  font-family: inherit;
+  text-align: center;
+}
+
+.ie-nutrition-facts {
+  border-top: 3px solid var(--ie-white);
+  padding-top: 10px;
+  margin-bottom: 20px;
+}
+.ie-nutrition-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ie-border);
+  font-size: 0.86rem;
+}
+.ie-nutrition-row.total { font-weight: 700; font-size: 1rem; border-bottom: 2px solid var(--ie-white); }
+.ie-nutrition-row span:last-child { color: var(--ie-gray); }
+.ie-nutrition-row.total span:last-child { color: var(--ie-orange); }
+
+/* ============================================================
+   CALCULATOR TABS + PROFILE
+   ============================================================ */
+.ie-calc-tabs-section { padding-bottom: 0; }
+.ie-calc-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.ie-calc-tabs .ie-chip { font-size: 0.9rem; padding: 11px 22px; display: flex; align-items: center; gap: 8px; }
+
+.ie-calc-profile {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  padding: 22px;
+}
+.ie-calc-input-group { display: flex; flex-direction: column; gap: 6px; }
+.ie-calc-input-group label { font-size: 0.75rem; color: var(--ie-gray); font-weight: 500; }
+.ie-calc-input-group select,
+.ie-calc-input-group input {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--ie-border);
+  color: var(--ie-white);
+  padding: 10px 12px;
+  border-radius: var(--ie-radius-sm);
+  font-family: inherit;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color var(--ie-transition);
+}
+.ie-calc-input-group select:focus,
+.ie-calc-input-group input:focus { border-color: var(--ie-orange); }
+
+/* ============================================================
+   CALCULATOR RESULT PANELS
+   ============================================================ */
+.ie-calc-result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.ie-calc-result-card { padding: 30px; text-align: center; }
+.ie-calc-result-card h3 {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.ie-calc-result-card h3 i { color: var(--ie-orange); }
+
+.ie-calc-big-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.2rem;
+  color: var(--ie-orange);
+  letter-spacing: 1px;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.ie-calc-big-number small { font-size: 1.1rem; color: var(--ie-gray); font-family: 'Poppins', sans-serif; }
+
+.ie-bmi-category { color: var(--ie-gray); font-size: 0.88rem; margin-bottom: 22px; }
+
+.ie-calc-info-card { padding: 26px; text-align: left; }
+.ie-calc-info-card h4 { margin-bottom: 12px; color: var(--ie-orange-light); }
+.ie-calc-info-card p { color: var(--ie-gray); font-size: 0.88rem; line-height: 1.6; }
+
+.ie-formula-box {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: var(--ie-radius-sm);
+  background: rgba(255,106,0,0.06);
+  border: 1px solid rgba(255,106,0,0.2);
+  font-size: 0.82rem;
+  line-height: 1.8;
+  color: var(--ie-white);
+}
+
+/* BMI Scale bar */
+.ie-bmi-scale { position: relative; margin-bottom: 14px; }
+.ie-bmi-scale-bar {
+  display: flex;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.ie-bmi-scale-bar .seg { flex: 1; }
+.ie-bmi-scale-bar .seg.under { background: #4da3ff; }
+.ie-bmi-scale-bar .seg.normal { background: var(--ie-success); }
+.ie-bmi-scale-bar .seg.over { background: #ffc857; }
+.ie-bmi-scale-bar .seg.obese { background: var(--ie-danger); }
+.ie-bmi-scale-marker {
+  position: absolute;
+  top: -6px;
+  left: 0%;
+  width: 3px;
+  height: 22px;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(255,255,255,0.7);
+  transition: left 0.5s ease;
+}
+
+.ie-bmi-legend { list-style: none; padding: 0; margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.ie-bmi-legend li { display: flex; align-items: center; gap: 10px; font-size: 0.84rem; color: var(--ie-gray); }
+.ie-bmi-legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.ie-bmi-legend .dot.under { background: #4da3ff; }
+.ie-bmi-legend .dot.normal { background: var(--ie-success); }
+.ie-bmi-legend .dot.over { background: #ffc857; }
+.ie-bmi-legend .dot.obese { background: var(--ie-danger); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .ie-dashboard-grid { grid-template-columns: 1fr 1fr; }
+  .ie-water-card { grid-column: span 2; }
+  .ie-meal-grid { grid-template-columns: repeat(2, 1fr); }
+  .ie-calc-profile { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .ie-dashboard-grid { grid-template-columns: 1fr; }
+  .ie-water-card { grid-column: span 1; }
+  .ie-meal-grid { grid-template-columns: 1fr; }
+  .ie-calc-profile { grid-template-columns: 1fr 1fr; }
+  .ie-calc-result-grid { grid-template-columns: 1fr; }
+  .ie-goal-strip { flex-direction: column; align-items: stretch; }
+}

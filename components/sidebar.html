@@ -1,0 +1,44 @@
+<!-- ==========================================================================
+     IRON EDGE FITNESS — components/sidebar.html
+     Admin Panel sidebar. Fetched into #ie-sidebar-slot by js/admin.js on
+     every admin/*.html page. Active link + admin name/role are filled in
+     by js/admin.js once the signed-in admin's profile loads.
+     ========================================================================== -->
+
+<button type="button" class="ie-icon-btn ie-admin-sidebar-toggle" id="ie-admin-sidebar-toggle" aria-label="Toggle admin menu" aria-expanded="false">
+  <i class="fa-solid fa-bars"></i>
+</button>
+<div class="ie-admin-sidebar-backdrop" id="ie-admin-sidebar-backdrop"></div>
+
+<aside class="ie-admin-sidebar" id="ie-admin-sidebar">
+  <a href="index.html" class="ie-admin-brand">
+    <span class="ie-logo__mark"><i class="fa-solid fa-bolt"></i></span>
+    IRON <span style="color:var(--ie-orange-400);">EDGE</span> <span style="font-size:0.65rem; color:var(--ie-ash); font-family:var(--ie-font-mono); text-transform:uppercase; margin-left:2px;">Admin</span>
+  </a>
+
+  <nav class="ie-admin-nav" aria-label="Admin navigation">
+    <a href="index.html" data-admin-nav="dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+    <a href="users.html" data-admin-nav="users"><i class="fa-solid fa-users"></i> Users</a>
+    <a href="memberships.html" data-admin-nav="memberships"><i class="fa-solid fa-id-card"></i> Memberships</a>
+    <a href="products.html" data-admin-nav="products"><i class="fa-solid fa-boxes-stacked"></i> Products</a>
+    <a href="orders.html" data-admin-nav="orders"><i class="fa-solid fa-receipt"></i> Orders</a>
+    <a href="trainers.html" data-admin-nav="trainers"><i class="fa-solid fa-person-chalkboard"></i> Trainers</a>
+    <a href="analytics.html" data-admin-nav="analytics"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+
+    <div class="ie-admin-nav-divider"></div>
+    <a href="../pages/index.html" data-admin-nav="site"><i class="fa-solid fa-arrow-left"></i> Back to Site</a>
+  </nav>
+
+  <div class="ie-admin-sidebar-footer">
+    <div class="ie-admin-profile">
+      <span class="ie-admin-profile__avatar" id="ie-admin-avatar">A</span>
+      <div>
+        <p class="ie-admin-profile__name" id="ie-admin-name">Loading…</p>
+        <p class="ie-admin-profile__role">Admin</p>
+      </div>
+    </div>
+    <button type="button" class="ie-admin-logout-btn" data-logout>
+      <i class="fa-solid fa-right-from-bracket"></i> Log Out
+    </button>
+  </div>
+</aside>

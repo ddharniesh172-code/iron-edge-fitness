@@ -1,0 +1,101 @@
+/* ==========================================================================
+   IRON EDGE FITNESS — themes.css
+   Design token system. Every color, radius, shadow and font in the project
+   is derived from the custom properties defined here. Two themes are
+   supported: [data-theme="dark"] (default) and [data-theme="light"].
+   ========================================================================== */
+
+:root {
+  /* ---- Brand Orange Ramp ---- */
+  --ie-orange-300: #ffb066;
+  --ie-orange-400: #ff8f3f;
+  --ie-orange-500: #ff6a00;   /* core brand orange */
+  --ie-orange-600: #e35c00;
+  --ie-orange-700: #c94e00;
+  --ie-ember: #ffb347;        /* highlight / gradient end */
+
+  /* ---- Neutrals (warm, never pure black/white) ---- */
+  --ie-void: #0a0908;
+  --ie-surface-0: #0d0c0a;
+  --ie-surface-1: #15120f;
+  --ie-surface-2: #1c1815;
+  --ie-surface-3: #262019;
+  --ie-line: rgba(255, 255, 255, 0.08);
+  --ie-line-strong: rgba(255, 255, 255, 0.14);
+  --ie-ink: #f3ede4;
+  --ie-ink-dim: #cfc7ba;
+  --ie-ash: #8f887f;
+  --ie-ash-dark: #5c564e;
+
+  /* ---- Semantic ---- */
+  --ie-success: #35d68a;
+  --ie-warning: #ffcc4d;
+  --ie-danger: #ff5459;
+  --ie-info: #4ecbff;
+
+  /* ---- Typography ---- */
+  --ie-font-display: 'Anton', 'Arial Narrow', sans-serif;
+  --ie-font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ie-font-mono: 'JetBrains Mono', 'Space Mono', monospace;
+
+  /* ---- Radii ---- */
+  --ie-r-sm: 10px;
+  --ie-r-md: 18px;
+  --ie-r-lg: 28px;
+  --ie-r-xl: 40px;
+  --ie-r-pill: 999px;
+
+  /* ---- Shadows / Glow ---- */
+  --ie-shadow-1: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --ie-shadow-2: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --ie-shadow-3: 0 24px 64px rgba(0, 0, 0, 0.55);
+  --ie-glow-orange: 0 0 24px rgba(255, 106, 0, 0.45), 0 0 64px rgba(255, 106, 0, 0.18);
+  --ie-glow-orange-strong: 0 0 32px rgba(255, 138, 0, 0.65), 0 0 90px rgba(255, 106, 0, 0.35);
+  --ie-glow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* ---- Glass ---- */
+  --ie-glass-bg: rgba(21, 18, 15, 0.55);
+  --ie-glass-bg-strong: rgba(21, 18, 15, 0.78);
+  --ie-glass-border: rgba(255, 255, 255, 0.10);
+  --ie-glass-blur: 18px;
+
+  /* ---- Gradients ---- */
+  --ie-gradient-brand: linear-gradient(135deg, var(--ie-orange-400) 0%, var(--ie-orange-600) 55%, var(--ie-orange-700) 100%);
+  --ie-gradient-text: linear-gradient(90deg, var(--ie-ember) 0%, var(--ie-orange-500) 60%, var(--ie-orange-700) 100%);
+  --ie-gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 100%);
+  --ie-gradient-fade-bottom: linear-gradient(180deg, transparent 0%, var(--ie-void) 100%);
+
+  /* ---- Motion ---- */
+  --ie-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ie-ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --ie-dur-fast: 180ms;
+  --ie-dur-med: 420ms;
+  --ie-dur-slow: 800ms;
+
+  /* ---- Layout ---- */
+  --ie-container: 1280px;
+  --ie-nav-h: 84px;
+  --ie-nav-h-scrolled: 68px;
+}
+
+/* Background + text mapped to theme so components never hardcode raw colors */
+[data-theme='dark'] {
+  --ie-bg: var(--ie-void);
+  --ie-bg-alt: var(--ie-surface-1);
+  --ie-text: var(--ie-ink);
+  --ie-text-muted: var(--ie-ash);
+  --ie-card-bg: var(--ie-glass-bg);
+}
+
+[data-theme='light'] {
+  --ie-bg: #f4efe8;
+  --ie-bg-alt: #e9e2d7;
+  --ie-text: #1a1512;
+  --ie-text-muted: #6b6259;
+  --ie-card-bg: rgba(255, 255, 255, 0.55);
+  --ie-glass-bg: rgba(255, 255, 255, 0.55);
+  --ie-glass-bg-strong: rgba(255, 255, 255, 0.78);
+  --ie-glass-border: rgba(20, 15, 10, 0.10);
+  --ie-line: rgba(20, 15, 10, 0.08);
+  --ie-line-strong: rgba(20, 15, 10, 0.16);
+}

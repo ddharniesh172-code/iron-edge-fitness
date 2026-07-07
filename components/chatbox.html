@@ -1,0 +1,37 @@
+<!-- ==========================================================================
+     IRON EDGE FITNESS — components/chatbox.html
+     Fetched into #ie-chat-slot by js/main.js. Full chat logic lives in
+     js/chat.js — this fragment only renders the launcher + panel shell.
+     ========================================================================== -->
+<button id="ie-chat-launcher" aria-label="Open AI Coach chat" aria-haspopup="dialog">
+  <i class="fa-solid fa-comment-dots"></i>
+</button>
+
+<button id="ie-back-to-top" aria-label="Back to top">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<div id="ie-chat-panel" class="ie-glass" role="dialog" aria-label="AI Coach chat"
+     style="position:fixed; right:28px; bottom:100px; width:340px; max-width:90vw; height:440px;
+            border-radius:var(--ie-r-lg); z-index:901; display:none; flex-direction:column; overflow:hidden;">
+  <div style="padding:16px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--ie-line);">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="width:36px;height:36px;border-radius:50%;background:var(--ie-gradient-brand);display:grid;place-items:center;color:#150c04;"><i class="fa-solid fa-robot"></i></span>
+      <div>
+        <p style="font-weight:700; font-size:0.9rem;">AI Coach</p>
+        <p style="font-size:0.72rem; color:var(--ie-success);">● Online</p>
+      </div>
+    </div>
+    <button id="ie-chat-close" class="ie-icon-btn" aria-label="Close chat"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div id="ie-chat-messages" style="flex:1; padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; font-size:0.85rem;">
+    <div style="align-self:flex-start; background:rgba(255,255,255,0.06); padding:10px 14px; border-radius:14px 14px 14px 2px; max-width:80%;">
+      Hey! I'm your AI Coach. Ask me for a quick warm-up, macro tip, or form check.
+    </div>
+  </div>
+  <form id="ie-chat-form" style="display:flex; gap:8px; padding:12px; border-top:1px solid var(--ie-line);">
+    <input id="ie-chat-input" type="text" placeholder="Type a message…" autocomplete="off"
+           style="flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--ie-glass-border); border-radius:var(--ie-r-pill); padding:10px 16px; color:var(--ie-text);">
+    <button type="submit" class="ie-icon-btn" aria-label="Send message"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>

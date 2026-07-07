@@ -1,0 +1,25 @@
+# ============================================================
+# IRON EDGE FITNESS — robots.txt
+# ============================================================
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /pages/workout.html
+Allow: /pages/body-parts.html
+Allow: /pages/exercise-details.html
+Allow: /pages/nutrition-calculator.html
+
+# Personalized / account-gated pages — not useful to index since
+# content is unique per logged-in user and has no static SEO value
+Disallow: /pages/dashboard.html
+Disallow: /pages/diet-planner.html
+Disallow: /pages/community.html
+Disallow: /pages/trainer-booking.html
+Disallow: /pages/ai-coach.html
+
+# Never index raw data/config assets
+Disallow: /firebase/
+Disallow: /js/firebase-config.js
+
+Sitemap: https://www.ironedgefitness.com/sitemap.xml

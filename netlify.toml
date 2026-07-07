@@ -1,0 +1,62 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/workout"
+  to = "/pages/workout.html"
+  status = 200
+
+[[redirects]]
+  from = "/body-parts"
+  to = "/pages/body-parts.html"
+  status = 200
+
+[[redirects]]
+  from = "/diet"
+  to = "/pages/diet-planner.html"
+  status = 200
+
+[[redirects]]
+  from = "/calculators"
+  to = "/pages/nutrition-calculator.html"
+  status = 200
+
+[[redirects]]
+  from = "/community"
+  to = "/pages/community.html"
+  status = 200
+
+[[redirects]]
+  from = "/trainers"
+  to = "/pages/trainer-booking.html"
+  status = 200
+
+[[redirects]]
+  from = "/ai-coach"
+  to = "/pages/ai-coach.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/pages/dashboard.html"
+  status = 200
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*.@(jpg|jpeg|gif|png|svg|webp|ico)"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, immutable"

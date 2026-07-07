@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Exercise Details | IRON EDGE FITNESS</title>
+<meta name="description" content="Full exercise breakdown - target muscle, equipment, sets, reps, rest time, calories burned and video demo.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<link rel="stylesheet" href="../css/workout.css">
+</head>
+<body class="ie-body">
+
+<!-- ================= NAVBAR ================= -->
+<header class="ie-navbar">
+  <div class="ie-navbar-inner">
+    <a href="../index.html" class="ie-logo">IRON<span>EDGE</span></a>
+    <nav class="ie-nav-links">
+      <a href="../index.html">Home</a>
+      <a href="workout.html">Workouts</a>
+      <a href="body-parts.html">Body Parts</a>
+      <a href="diet.html">Diet</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="community.html">Community</a>
+    </nav>
+    <div class="ie-nav-actions">
+      <button class="ie-icon-btn" id="favToggleNav" title="Favorites"><i class="fa-solid fa-heart"></i></button>
+      <a href="dashboard.html" class="ie-icon-btn" title="Dashboard"><i class="fa-solid fa-user"></i></a>
+      <button class="ie-hamburger" id="hamburgerBtn"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= BREADCRUMB ================= -->
+<div class="ie-breadcrumb">
+  <a href="workout.html"><i class="fa-solid fa-arrow-left"></i> Back to Workouts</a>
+</div>
+
+<!-- ================= EXERCISE DETAIL ================= -->
+<section class="ie-section ie-exercise-detail" id="exerciseDetailRoot">
+
+  <div class="ie-detail-grid">
+
+    <!-- LEFT: Media -->
+    <div class="ie-detail-media glass-card">
+      <img id="exerciseImage" src="" alt="Exercise image" class="ie-detail-img">
+      <div class="ie-detail-badges">
+        <span class="ie-badge ie-badge-bp" id="exerciseBodyPartBadge">Chest</span>
+        <span class="ie-badge" id="exerciseDifficultyBadge">Beginner</span>
+      </div>
+      <button class="ie-fav-float" id="exerciseFavBtn" title="Add to favorites">
+        <i class="fa-regular fa-heart"></i>
+      </button>
+    </div>
+
+    <!-- RIGHT: Info -->
+    <div class="ie-detail-info">
+      <p class="ie-eyebrow" id="exerciseCategoryLabel">STRENGTH TRAINING</p>
+      <h1 id="exerciseName">Exercise Name</h1>
+      <p class="ie-detail-desc" id="exerciseDescription">Loading exercise description...</p>
+
+      <div class="ie-stat-chip-row">
+        <div class="ie-stat-chip glass-card">
+          <i class="fa-solid fa-crosshairs"></i>
+          <div><small>Target Muscle</small><span id="exerciseTarget">--</span></div>
+        </div>
+        <div class="ie-stat-chip glass-card">
+          <i class="fa-solid fa-dumbbell"></i>
+          <div><small>Equipment</small><span id="exerciseEquipment">--</span></div>
+        </div>
+        <div class="ie-stat-chip glass-card">
+          <i class="fa-solid fa-repeat"></i>
+          <div><small>Sets &times; Reps</small><span id="exerciseSetsReps">--</span></div>
+        </div>
+        <div class="ie-stat-chip glass-card">
+          <i class="fa-solid fa-hourglass-half"></i>
+          <div><small>Rest Time</small><span id="exerciseRest">--</span></div>
+        </div>
+        <div class="ie-stat-chip glass-card">
+          <i class="fa-solid fa-fire-flame-curved"></i>
+          <div><small>Calories Burned</small><span id="exerciseCalories">--</span></div>
+        </div>
+      </div>
+
+      <div class="ie-detail-actions">
+        <button class="ie-btn-primary" id="startWorkoutBtn">
+          <i class="fa-solid fa-play"></i> Start Workout
+        </button>
+        <button class="ie-btn-outline" id="favBtnSecondary">
+          <i class="fa-regular fa-heart"></i> Add to Favorites
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= VIDEO ================= -->
+  <div class="ie-video-wrap glass-card">
+    <div class="ie-section-head">
+      <h2><i class="fa-brands fa-youtube"></i> Video Demonstration</h2>
+    </div>
+    <div class="ie-video-frame">
+      <iframe id="exerciseVideo" src="" title="Exercise demo video" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <!-- ================= INSTRUCTIONS ================= -->
+  <div class="ie-instructions-wrap glass-card">
+    <div class="ie-section-head">
+      <h2><i class="fa-solid fa-list-check"></i> How To Perform</h2>
+    </div>
+    <ol class="ie-instructions-list" id="exerciseInstructions"></ol>
+
+    <div class="ie-tips-box">
+      <h4><i class="fa-solid fa-lightbulb"></i> Pro Tips</h4>
+      <ul id="exerciseTips"></ul>
+    </div>
+  </div>
+
+  <!-- ================= MUSCLE MAP ================= -->
+  <div class="ie-muscles-wrap glass-card">
+    <div class="ie-section-head">
+      <h2><i class="fa-solid fa-person-half-dress"></i> Muscles Worked</h2>
+    </div>
+    <div class="ie-muscle-tags" id="muscleTags"></div>
+  </div>
+
+  <!-- ================= RELATED EXERCISES ================= -->
+  <div class="ie-section">
+    <div class="ie-section-head">
+      <h2><i class="fa-solid fa-layer-group"></i> Related Exercises</h2>
+    </div>
+    <div class="ie-card-grid" id="relatedGrid"></div>
+  </div>
+
+</section>
+
+<!-- ================= ACTIVE WORKOUT TIMER (floating) ================= -->
+<div id="workoutTimerBar" class="ie-timer-bar" style="display:none;">
+  <div class="ie-timer-info">
+    <i class="fa-solid fa-stopwatch"></i>
+    <div>
+      <p class="ie-timer-exercise" id="timerExerciseName">Exercise Name</p>
+      <p class="ie-timer-sub" id="timerPhaseLabel">Get Ready</p>
+    </div>
+  </div>
+  <div class="ie-timer-clock" id="timerClock">00:00</div>
+  <div class="ie-timer-actions">
+    <button id="timerPauseBtn" class="ie-icon-btn"><i class="fa-solid fa-pause"></i></button>
+    <button id="timerSkipBtn" class="ie-icon-btn"><i class="fa-solid fa-forward-step"></i></button>
+    <button id="timerFinishBtn" class="ie-btn-primary-sm">Finish Workout</button>
+    <button id="timerCloseBtn" class="ie-icon-btn"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+</div>
+
+<!-- ================= WORKOUT COMPLETE MODAL ================= -->
+<div id="completeModal" class="ie-modal-overlay" style="display:none;">
+  <div class="ie-modal glass-card">
+    <div class="ie-modal-icon"><i class="fa-solid fa-trophy"></i></div>
+    <h3>Workout Complete!</h3>
+    <p id="completeSummary">You crushed it. Great work today.</p>
+    <div class="ie-modal-stats">
+      <div><span id="completeCalories">0</span><small>Calories</small></div>
+      <div><span id="completeDuration">0</span><small>Minutes</small></div>
+    </div>
+    <button class="ie-btn-primary" id="completeCloseBtn">Awesome, Done</button>
+  </div>
+</div>
+
+<div id="toast" class="ie-toast"></div>
+
+<footer class="ie-footer">
+  <p>&copy; 2026 IRON EDGE FITNESS. All rights reserved.</p>
+</footer>
+
+<script src="../js/firebase-config.js"></script>
+<script src="../firebase/workout.js"></script>
+<script src="../js/exercise-data.js"></script>
+<script src="../js/workout.js"></script>
+<script>
+  // ---- Exercise Details page specific rendering ----
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const exerciseId = params.get('id');
+
+    if (typeof loadExerciseDetail === 'function') {
+      loadExerciseDetail(exerciseId);
+    }
+  });
+</script>
+</body>
+</html>

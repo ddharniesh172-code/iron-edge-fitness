@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iron Edge Fitness — Transform Your Body. Transform Your Life.</title>
+  <meta name="description"
+    content="Iron Edge Fitness is a performance gym with AI-powered workout plans, diet tracking, calorie &amp; BMI tools, elite trainers, and a live community — train smarter, not just harder.">
+  <meta name="keywords"
+    content="gym, fitness, personal training, workout planner, diet planner, calorie calculator, BMI calculator, BMR calculator, membership, Iron Edge Fitness">
+  <meta name="author" content="Iron Edge Fitness">
+  <meta property="og:title" content="Iron Edge Fitness — Transform Your Body. Transform Your Life.">
+  <meta property="og:description" content="AI workout plans, diet tracking, and elite coaching under one roof.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- AOS scroll animation -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.css">
+
+  <!-- Swiper -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css">
+
+  <!-- App styles (order matters: tokens → base → animation → responsive) -->
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+
+<body data-page="home" data-components-base="../components/">
+
+  <!-- Loader -->
+  <div id="ie-loader-slot"></div>
+
+  <!-- Navbar -->
+  <div id="ie-navbar-slot"></div>
+
+  <main>
+
+    <!-- ============================== HERO ============================== -->
+    <section id="ie-hero">
+      <div class="ie-hero-bg">
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=2000&q=80"
+          alt="Athlete lifting a barbell in a dark gym" loading="eager">
+      </div>
+      <div class="ie-hero-glow g1 ie-anim-float-slow"></div>
+      <div class="ie-hero-glow g2 ie-anim-float-slow"></div>
+
+      <div class="ie-container ie-hero-content">
+        <p class="ie-eyebrow" data-reveal>Iron Edge Fitness · Est. 2011</p>
+        <h1 class="ie-hero-title" data-reveal>
+          <span>TRANSFORM YOUR BODY.</span>
+          <span class="ie-text-gradient">TRANSFORM YOUR LIFE.</span>
+        </h1>
+        <p class="ie-lead" data-reveal>
+          Strength coaching, AI-built training plans, real-time nutrition tracking, and a
+          community that shows up — every rep logged, every goal measured, every milestone earned.
+        </p>
+
+        <div class="ie-hero-actions" data-reveal>
+          <a href="membership.html" class="ie-btn ie-btn-primary"><i class="fa-solid fa-bolt"></i> Join Now</a>
+          <a href="membership.html" class="ie-btn ie-btn-ghost"><i class="fa-solid fa-list-check"></i> Explore Plans</a>
+          <button class="ie-btn-watch" id="ie-watch-video-btn" type="button">
+            <span class="ie-btn-watch__circle"><i class="fa-solid fa-play"></i></span>
+            Watch Video
+          </button>
+        </div>
+      </div>
+
+      <div class="ie-hero-scroll">
+        <span>Scroll</span>
+        <span class="ie-hero-scroll__bar"></span>
+      </div>
+    </section>
+
+    <!-- ============================== STATS ============================== -->
+    <section id="ie-stats">
+      <div class="ie-container">
+        <div class="ie-plate-divider" style="--fill:100%; margin-bottom:40px;">
+          <span class="ie-plate-divider__label">Loaded</span>
+          <span class="ie-plate-divider__track"><span class="ie-plate-divider__fill"></span></span>
+          <span class="ie-plate-divider__label">Since 2011</span>
+        </div>
+        <div class="ie-stats-grid">
+          <div class="ie-stat" data-reveal>
+            <div class="ie-stat__num"><span data-count="5000" data-suffix="+">0</span></div>
+            <p class="ie-stat__label">Members</p>
+          </div>
+          <div class="ie-stat" data-reveal>
+            <div class="ie-stat__num"><span data-count="50" data-suffix="+">0</span></div>
+            <p class="ie-stat__label">Trainers</p>
+          </div>
+          <div class="ie-stat" data-reveal>
+            <div class="ie-stat__num"><span data-count="24" data-suffix="/7">0</span></div>
+            <p class="ie-stat__label">Support</p>
+          </div>
+          <div class="ie-stat" data-reveal>
+            <div class="ie-stat__num"><span data-count="15" data-suffix="+">0</span></div>
+            <p class="ie-stat__label">Years Experience</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= DASHBOARD PREVIEW ========================= -->
+    <section id="ie-dash-preview" class="ie-section">
+      <div class="ie-container">
+        <div class="ie-section-head">
+          <div>
+            <p class="ie-eyebrow">Your Dashboard</p>
+            <h2 class="ie-heading-lg">Today's goal, <span class="ie-text-gradient">at a glance</span></h2>
+          </div>
+          <a href="dashboard.html" class="ie-btn ie-btn-ghost">Open Full Dashboard <i
+              class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="ie-dash-grid">
+          <!-- Today's Goal Card -->
+          <div class="ie-glass ie-goal-card" data-reveal>
+            <div class="ie-goal-card__top">
+              <h3 class="ie-goal-card__title">Today's Goal</h3>
+              <span class="ie-goal-card__badge">DAY 42 · STREAK</span>
+            </div>
+
+            <div class="ie-goal-metrics">
+              <div class="ie-metric">
+                <div class="ie-metric__ring-wrap"><canvas id="ie-ring-workout" width="84" height="84"></canvas></div>
+                <p class="ie-metric__value">72%</p>
+                <p class="ie-metric__label">Workout</p>
+              </div>
+              <div class="ie-metric">
+                <div class="ie-metric__ring-wrap"><canvas id="ie-ring-calories" width="84" height="84"></canvas></div>
+                <p class="ie-metric__value">1,860 / 2,400</p>
+                <p class="ie-metric__label">Calories</p>
+              </div>
+              <div class="ie-metric">
+                <div class="ie-metric__ring-wrap"><canvas id="ie-ring-water" width="84" height="84"></canvas></div>
+                <p class="ie-metric__value">2.5L / 3L</p>
+                <p class="ie-metric__label">Water Intake</p>
+              </div>
+            </div>
+
+            <div>
+              <p class="ie-eyebrow" style="margin-bottom:10px;">Weekly Output</p>
+              <div class="ie-goal-card__chart"><canvas id="ie-weekly-chart"></canvas></div>
+            </div>
+          </div>
+
+          <!-- Profile Card -->
+          <div class="ie-glass ie-profile-card" data-reveal>
+            <div class="ie-profile-card__head">
+              <span class="ie-profile-card__avatar">JD</span>
+              <div>
+                <p class="ie-profile-card__name">Jordan Diaz</p>
+                <p class="ie-profile-card__plan">Elite Membership · Active</p>
+              </div>
+            </div>
+
+            <p class="ie-eyebrow" style="margin-bottom:0;">Quick Access</p>
+            <div class="ie-profile-list">
+              <a class="ie-profile-row" href="workout.html">
+                <span class="ie-profile-row__left"><span class="ie-profile-row__icon"><i
+                      class="fa-solid fa-dumbbell"></i></span>My Workout Plan</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+              <a class="ie-profile-row" href="diet.html">
+                <span class="ie-profile-row__left"><span class="ie-profile-row__icon"><i
+                      class="fa-solid fa-utensils"></i></span>Diet Planner</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+              <a class="ie-profile-row" href="progress.html">
+                <span class="ie-profile-row__left"><span class="ie-profile-row__icon"><i
+                      class="fa-solid fa-chart-line"></i></span>Progress Tracker</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+              <a class="ie-profile-row" href="community.html">
+                <span class="ie-profile-row__left"><span class="ie-profile-row__icon"><i
+                      class="fa-solid fa-people-group"></i></span>Community Feed</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================== QUICK ACCESS =========================== -->
+    <section id="ie-quick-access" class="ie-section">
+      <div class="ie-container">
+        <div class="ie-section-head">
+          <div>
+            <p class="ie-eyebrow">Train Your Way</p>
+            <h2 class="ie-heading-lg">Quick access <span class="ie-text-gradient">workouts</span></h2>
+          </div>
+          <a href="workout.html" class="ie-btn ie-btn-ghost">View All Programs <i
+              class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="ie-quick-grid">
+          <a href="body-parts.html" class="ie-quick-card" data-reveal>
+            <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=900&q=80"
+              alt="Strength training with a barbell" loading="lazy">
+            <span class="ie-quick-card__arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="ie-quick-card__body">
+              <span class="ie-quick-card__tag">Strength</span>
+              <h3 class="ie-quick-card__title">Powerbuilding</h3>
+              <p class="ie-quick-card__meta">6 weeks · 4 days/week</p>
+            </div>
+          </a>
+          <a href="body-parts.html" class="ie-quick-card" data-reveal>
+            <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80"
+              alt="Runner training cardio outdoors" loading="lazy">
+            <span class="ie-quick-card__arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="ie-quick-card__body">
+              <span class="ie-quick-card__tag">Cardio</span>
+              <h3 class="ie-quick-card__title">Endurance Engine</h3>
+              <p class="ie-quick-card__meta">4 weeks · 5 days/week</p>
+            </div>
+          </a>
+          <a href="body-parts.html" class="ie-quick-card" data-reveal>
+            <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=900&q=80"
+              alt="Athletes doing functional HIIT training" loading="lazy">
+            <span class="ie-quick-card__arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="ie-quick-card__body">
+              <span class="ie-quick-card__tag">HIIT</span>
+              <h3 class="ie-quick-card__title">Metabolic Burn</h3>
+              <p class="ie-quick-card__meta">3 weeks · 6 days/week</p>
+            </div>
+          </a>
+          <a href="body-parts.html" class="ie-quick-card" data-reveal>
+            <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=900&q=80"
+              alt="CrossFit style functional workout" loading="lazy">
+            <span class="ie-quick-card__arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="ie-quick-card__body">
+              <span class="ie-quick-card__tag">CrossFit</span>
+              <h3 class="ie-quick-card__title">Iron Circuit</h3>
+              <p class="ie-quick-card__meta">8 weeks · 5 days/week</p>
+            </div>
+          </a>
+          <a href="body-parts.html" class="ie-quick-card" data-reveal>
+            <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=900&q=80"
+              alt="Yoga and mobility recovery session" loading="lazy">
+            <span class="ie-quick-card__arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="ie-quick-card__body">
+              <span class="ie-quick-card__tag">Recovery</span>
+              <h3 class="ie-quick-card__title">Mobility &amp; Flow</h3>
+              <p class="ie-quick-card__meta">Ongoing · 3 days/week</p>
+            </div>
+          </a>
+          <a href="body-parts.html" class="ie-quick-card" data-reveal>
+            <img src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1?auto=format&fit=crop&w=900&q=80"
+              alt="Boxing conditioning training" loading="lazy">
+            <span class="ie-quick-card__arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="ie-quick-card__body">
+              <span class="ie-quick-card__tag">Combat</span>
+              <h3 class="ie-quick-card__title">Boxing Conditioning</h3>
+              <p class="ie-quick-card__meta">5 weeks · 4 days/week</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ TRAINERS ============================= -->
+    <section id="ie-trainers" class="ie-section">
+      <div class="ie-container">
+        <div class="ie-section-head">
+          <div>
+            <p class="ie-eyebrow">Coached By The Best</p>
+            <h2 class="ie-heading-lg">Top <span class="ie-text-gradient">trainers</span></h2>
+          </div>
+          <a href="trainers.html" class="ie-btn ie-btn-ghost">Meet The Team <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="swiper ie-trainers-swiper">
+          <div class="swiper-wrapper">
+
+            <div class="swiper-slide">
+              <div class="ie-glass ie-trainer-card">
+                <div class="ie-trainer-card__img">
+                  <img
+                    src="https://images.unsplash.com/photo-1571731956672-f2b94d7dd0cb?auto=format&fit=crop&w=700&q=80"
+                    alt="Coach Marcus Reeves">
+                  <div class="ie-trainer-card__social">
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                  </div>
+                </div>
+                <div class="ie-trainer-card__body">
+                  <p class="ie-trainer-card__name">Marcus Reeves</p>
+                  <p class="ie-trainer-card__role">Strength &amp; Powerlifting</p>
+                  <div class="ie-trainer-card__stats">
+                    <span><i class="fa-solid fa-star" style="color:var(--ie-orange-400);"></i> 4.9</span>
+                    <span>12 yrs exp.</span>
+                    <span>340 clients</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide">
+              <div class="ie-glass ie-trainer-card">
+                <div class="ie-trainer-card__img">
+                  <img src="https://images.unsplash.com/photo-1550345332-09e3ac987658?auto=format&fit=crop&w=700&q=80"
+                    alt="Coach Elena Cruz">
+                  <div class="ie-trainer-card__social">
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                  </div>
+                </div>
+                <div class="ie-trainer-card__body">
+                  <p class="ie-trainer-card__name">Elena Cruz</p>
+                  <p class="ie-trainer-card__role">HIIT &amp; Metabolic Conditioning</p>
+                  <div class="ie-trainer-card__stats">
+                    <span><i class="fa-solid fa-star" style="color:var(--ie-orange-400);"></i> 5.0</span>
+                    <span>8 yrs exp.</span>
+                    <span>280 clients</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide">
+              <div class="ie-glass ie-trainer-card">
+                <div class="ie-trainer-card__img">
+                  <img
+                    src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?auto=format&fit=crop&w=700&q=80"
+                    alt="Coach Devon Hale">
+                  <div class="ie-trainer-card__social">
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                  </div>
+                </div>
+                <div class="ie-trainer-card__body">
+                  <p class="ie-trainer-card__name">Devon Hale</p>
+                  <p class="ie-trainer-card__role">CrossFit &amp; Functional Fitness</p>
+                  <div class="ie-trainer-card__stats">
+                    <span><i class="fa-solid fa-star" style="color:var(--ie-orange-400);"></i> 4.8</span>
+                    <span>10 yrs exp.</span>
+                    <span>410 clients</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide">
+              <div class="ie-glass ie-trainer-card">
+                <div class="ie-trainer-card__img">
+                  <img
+                    src="https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?auto=format&fit=crop&w=700&q=80"
+                    alt="Coach Priya Nair">
+                  <div class="ie-trainer-card__social">
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                  </div>
+                </div>
+                <div class="ie-trainer-card__body">
+                  <p class="ie-trainer-card__name">Priya Nair</p>
+                  <p class="ie-trainer-card__role">Mobility, Yoga &amp; Recovery</p>
+                  <div class="ie-trainer-card__stats">
+                    <span><i class="fa-solid fa-star" style="color:var(--ie-orange-400);"></i> 4.9</span>
+                    <span>7 yrs exp.</span>
+                    <span>190 clients</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="swiper-pagination ie-trainers-pagination" style="position:relative; margin-top:24px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== MEMBERSHIP BANNER ========================== -->
+    <section class="ie-section" style="padding-top:0;">
+      <div class="ie-container">
+        <div class="ie-membership-banner ie-anim-glow" data-reveal>
+          <span class="ie-membership-banner__badge">Most Popular</span>
+          <div>
+            <p class="ie-eyebrow">Premium Membership</p>
+            <h2 class="ie-heading-lg">Go <span class="ie-text-gradient">Elite</span>. Train unlimited.</h2>
+            <div class="ie-membership-banner__price"><strong>$49</strong><span>/ month · cancel anytime</span></div>
+            <ul class="ie-membership-perks">
+              <li><i class="fa-solid fa-check"></i> Unlimited gym access, all locations</li>
+              <li><i class="fa-solid fa-check"></i> AI workout &amp; diet planner</li>
+              <li><i class="fa-solid fa-check"></i> 2 personal training sessions / month</li>
+              <li><i class="fa-solid fa-check"></i> Priority booking &amp; recovery zone</li>
+            </ul>
+          </div>
+          <a href="membership.html" class="ie-btn ie-btn-primary" style="align-self:center;">Claim Membership <i
+              class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= FEATURE CARDS =========================== -->
+    <section id="ie-features" class="ie-section">
+      <div class="ie-container">
+        <div class="ie-section-head">
+          <div>
+            <p class="ie-eyebrow">Everything In One Place</p>
+            <h2 class="ie-heading-lg">Tools built for <span class="ie-text-gradient">results</span></h2>
+          </div>
+        </div>
+
+        <div class="ie-feature-grid">
+          <div class="ie-glass ie-card ie-feature-card" data-reveal>
+            <span class="ie-feature-card__icon"><i class="fa-solid fa-robot"></i></span>
+            <h3 class="ie-feature-card__title">AI Workout Planner</h3>
+            <p class="ie-feature-card__desc">Adaptive routines that adjust to your recovery, equipment, and goals.</p>
+            <a href="workout.html" class="ie-feature-card__link">Explore <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="ie-glass ie-card ie-feature-card" data-reveal>
+            <span class="ie-feature-card__icon"><i class="fa-solid fa-utensils"></i></span>
+            <h3 class="ie-feature-card__title">Diet Planner</h3>
+            <p class="ie-feature-card__desc">Macro-balanced meal plans that sync with your training split.</p>
+            <a href="diet.html" class="ie-feature-card__link">Explore <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="ie-glass ie-card ie-feature-card" data-reveal>
+            <span class="ie-feature-card__icon"><i class="fa-solid fa-fire"></i></span>
+            <h3 class="ie-feature-card__title">Calorie Calculator</h3>
+            <p class="ie-feature-card__desc">Know your daily intake target down to the gram.</p>
+            <a href="calories.html" class="ie-feature-card__link">Calculate <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="ie-glass ie-card ie-feature-card" data-reveal>
+            <span class="ie-feature-card__icon"><i class="fa-solid fa-weight-scale"></i></span>
+            <h3 class="ie-feature-card__title">BMI Calculator</h3>
+            <p class="ie-feature-card__desc">Check where you stand and track it over time.</p>
+            <a href="bmi.html" class="ie-feature-card__link">Calculate <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="ie-glass ie-card ie-feature-card" data-reveal>
+            <span class="ie-feature-card__icon"><i class="fa-solid fa-gauge-high"></i></span>
+            <h3 class="ie-feature-card__title">BMR Calculator</h3>
+            <p class="ie-feature-card__desc">Find your baseline burn to build the right deficit or surplus.</p>
+            <a href="bmr.html" class="ie-feature-card__link">Calculate <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="ie-glass ie-card ie-feature-card" data-reveal>
+            <span class="ie-feature-card__icon"><i class="fa-solid fa-comment-dots"></i></span>
+            <h3 class="ie-feature-card__title">AI Coach</h3>
+            <p class="ie-feature-card__desc">Instant answers on form, recovery, and programming — 24/7.</p>
+            <a href="#" id="ie-open-ai-coach" class="ie-feature-card__link">Chat now <i
+                class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="ie-glass ie-card ie-feature-card" data-reveal>
+            <span class="ie-feature-card__icon"><i class="fa-solid fa-user-tie"></i></span>
+            <h3 class="ie-feature-card__title">Chat With Trainer</h3>
+            <p class="ie-feature-card__desc">Direct messaging with your assigned coach for real feedback.</p>
+            <a href="trainers.html" class="ie-feature-card__link">Meet trainers <i
+                class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="ie-glass ie-card ie-feature-card" data-reveal>
+            <span class="ie-feature-card__icon"><i class="fa-solid fa-mobile-screen-button"></i></span>
+            <h3 class="ie-feature-card__title">PWA App</h3>
+            <p class="ie-feature-card__desc">Install Iron Edge to your home screen — works offline at the gym.</p>
+            <a href="#" class="ie-feature-card__link">Install app <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <div id="ie-footer-slot"></div>
+
+  <!-- Floating chat + back-to-top -->
+  <div id="ie-chat-slot"></div>
+
+  <!-- Vendor scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- App scripts -->
+  <script src="../js/main.js"></script>
+  <script>
+    // Wire the "AI Coach" feature card to open the chat panel loaded via component.
+    document.addEventListener('ie:components-ready', () => {
+      const openBtn = document.getElementById('ie-open-ai-coach');
+      const launcher = document.getElementById('ie-chat-launcher');
+      if (openBtn && launcher) {
+        openBtn.addEventListener('click', (e) => { e.preventDefault(); launcher.click(); });
+      }
+    });
+  </script>
+</body>
+
+</html>

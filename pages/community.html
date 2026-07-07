@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community | IRON EDGE FITNESS</title>
+<meta name="description" content="Share your progress, connect with other members, and get inspired in the IRON EDGE FITNESS community.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+
+<link rel="stylesheet" href="../css/workout.css">
+<link rel="stylesheet" href="../css/diet.css">
+<link rel="stylesheet" href="../css/dashboard.css">
+<link rel="stylesheet" href="../css/community.css">
+</head>
+<body class="ie-body">
+
+<!-- ================= NAVBAR ================= -->
+<header class="ie-navbar">
+  <div class="ie-navbar-inner">
+    <a href="../index.html" class="ie-logo">IRON<span>EDGE</span></a>
+    <nav class="ie-nav-links">
+      <a href="../index.html">Home</a>
+      <a href="workout.html">Workouts</a>
+      <a href="diet-planner.html">Diet</a>
+      <a href="community.html" class="active">Community</a>
+      <a href="trainer-booking.html">Trainers</a>
+      <a href="dashboard.html">Dashboard</a>
+    </nav>
+    <div class="ie-nav-actions">
+      <button class="ie-icon-btn ie-notif-bell" id="notifBellBtn" title="Notifications">
+        <i class="fa-solid fa-bell"></i>
+        <span class="ie-notif-dot" id="notifDot" style="display:none;"></span>
+      </button>
+      <a href="dashboard.html" class="ie-icon-btn" title="Dashboard"><i class="fa-solid fa-user"></i></a>
+      <button class="ie-hamburger" id="hamburgerBtn"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= NOTIFICATION PANEL ================= -->
+<div class="ie-notif-panel" id="notifPanel" style="display:none;">
+  <div class="ie-notif-panel-head">
+    <h3><i class="fa-solid fa-bell"></i> Notifications</h3>
+    <button class="ie-link-btn" id="markAllReadBtn">Mark all read</button>
+  </div>
+  <div class="ie-notif-list" id="notifList"></div>
+</div>
+
+<!-- ================= HERO ================= -->
+<section class="ie-workout-hero">
+  <div class="ie-hero-glow"></div>
+  <div class="ie-hero-content">
+    <p class="ie-eyebrow">STAY CONNECTED</p>
+    <h1>Iron Edge <span>Community</span></h1>
+    <p class="ie-hero-sub">Share your wins, follow other members, and get inspired by the community around you.</p>
+
+    <div class="ie-search-bar ie-search-bar--sm glass-card">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="communitySearchInput" placeholder="Search posts, members, or hashtags...">
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAIN LAYOUT ================= -->
+<section class="ie-section ie-community-layout">
+
+  <!-- LEFT: Profile + Following -->
+  <aside class="ie-community-sidebar">
+    <div class="ie-profile-card glass-card">
+      <div class="ie-avatar" id="myAvatar"><i class="fa-solid fa-user"></i></div>
+      <h3 id="myDisplayName">Athlete</h3>
+      <p class="ie-profile-handle" id="myHandle">@athlete</p>
+      <div class="ie-profile-stats">
+        <div><span id="myPostCount">0</span><small>Posts</small></div>
+        <div><span id="myFollowerCount">0</span><small>Followers</small></div>
+        <div><span id="myFollowingCount">0</span><small>Following</small></div>
+      </div>
+    </div>
+
+    <div class="ie-sidebar-card glass-card">
+      <h4><i class="fa-solid fa-fire"></i> Trending Tags</h4>
+      <div class="ie-tag-list" id="trendingTags"></div>
+    </div>
+
+    <div class="ie-sidebar-card glass-card">
+      <h4><i class="fa-solid fa-user-group"></i> Suggested Members</h4>
+      <div class="ie-suggested-list" id="suggestedMembers"></div>
+    </div>
+  </aside>
+
+  <!-- CENTER: Feed -->
+  <div class="ie-community-feed">
+
+    <!-- Create Post -->
+    <div class="ie-create-post glass-card">
+      <div class="ie-create-post-top">
+        <div class="ie-avatar ie-avatar-sm"><i class="fa-solid fa-user"></i></div>
+        <textarea id="newPostText" placeholder="Share a win, ask a question, or post your progress..." rows="2"></textarea>
+      </div>
+      <div class="ie-image-preview-row" id="imagePreviewRow" style="display:none;">
+        <img id="imagePreview" src="" alt="Upload preview">
+        <button id="removeImageBtn" class="ie-modal-close" style="position:static;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="ie-create-post-actions">
+        <label class="ie-upload-btn">
+          <i class="fa-solid fa-image"></i> Photo
+          <input type="file" id="postImageInput" accept="image/*" hidden>
+        </label>
+        <button class="ie-btn-primary" id="submitPostBtn"><i class="fa-solid fa-paper-plane"></i> Post</button>
+      </div>
+    </div>
+
+    <!-- Feed Tabs -->
+    <div class="ie-feed-tabs">
+      <button class="ie-chip active" data-feed-tab="latest">Latest</button>
+      <button class="ie-chip" data-feed-tab="trending">Trending</button>
+      <button class="ie-chip" data-feed-tab="following">Following</button>
+    </div>
+
+    <!-- Posts Feed -->
+    <div class="ie-feed-list" id="feedList"></div>
+
+    <div class="ie-loadmore-wrap">
+      <button id="loadMoreFeedBtn" class="ie-btn-outline">Load More</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= USER PROFILE MODAL ================= -->
+<div id="userProfileModal" class="ie-modal-overlay" style="display:none;">
+  <div class="ie-modal ie-modal-lg glass-card">
+    <div class="ie-modal-close" id="userProfileCloseBtn"><i class="fa-solid fa-xmark"></i></div>
+    <div class="ie-profile-modal-head">
+      <div class="ie-avatar ie-avatar-lg" id="profileModalAvatar"><i class="fa-solid fa-user"></i></div>
+      <div>
+        <h3 id="profileModalName">Member Name</h3>
+        <p class="ie-profile-handle" id="profileModalHandle">@handle</p>
+      </div>
+      <button class="ie-btn-primary-sm" id="profileModalFollowBtn">Follow</button>
+    </div>
+    <div class="ie-profile-stats" id="profileModalStats">
+      <div><span>0</span><small>Posts</small></div>
+      <div><span>0</span><small>Followers</small></div>
+      <div><span>0</span><small>Following</small></div>
+    </div>
+    <div class="ie-feed-list" id="profileModalPosts"></div>
+  </div>
+</div>
+
+<!-- ================= COMMENTS MODAL ================= -->
+<div id="commentsModal" class="ie-modal-overlay" style="display:none;">
+  <div class="ie-modal ie-modal-lg glass-card">
+    <div class="ie-modal-close" id="commentsCloseBtn"><i class="fa-solid fa-xmark"></i></div>
+    <h3><i class="fa-solid fa-comments"></i> Comments</h3>
+    <div class="ie-comments-list" id="commentsList"></div>
+    <div class="ie-comment-input-row">
+      <input type="text" id="newCommentInput" placeholder="Write a comment...">
+      <button class="ie-icon-btn" id="submitCommentBtn"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SHARE MODAL ================= -->
+<div id="shareModal" class="ie-modal-overlay" style="display:none;">
+  <div class="ie-modal glass-card">
+    <div class="ie-modal-close" id="shareCloseBtn"><i class="fa-solid fa-xmark"></i></div>
+    <h3><i class="fa-solid fa-share-nodes"></i> Share Post</h3>
+    <p style="color:var(--ie-gray); font-size:0.88rem; margin-bottom:16px;">Share this post's link with your friends and training partners.</p>
+    <div class="ie-share-link-row">
+      <input type="text" id="shareLinkInput" readonly>
+      <button class="ie-btn-primary-sm" id="copyShareLinkBtn">Copy</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="ie-toast"></div>
+
+<footer class="ie-footer">
+  <p>&copy; 2026 IRON EDGE FITNESS. All rights reserved.</p>
+</footer>
+
+<script src="../js/firebase-config.js"></script>
+<script src="../firebase/community.js"></script>
+<script src="../firebase/trainer-booking.js"></script>
+<script src="../firebase/notifications.js"></script>
+<script src="../js/community-data.js"></script>
+<script src="../js/notifications.js"></script>
+<script src="../js/community.js"></script>
+</body>
+</html>

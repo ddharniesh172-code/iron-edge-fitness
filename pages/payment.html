@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Iron Edge Fitness</title>
+<meta name="description" content="Complete your Iron Edge Fitness membership purchase — secure checkout with coupon support and instant invoice.">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+
+<style>
+  /* ---- Payment-page-scoped styles (kept local; css/*.css untouched) ---- */
+
+  #ie-payment-hero {
+    padding-top: calc(var(--ie-nav-h) + 48px);
+    padding-bottom: 24px;
+  }
+
+  .ie-checkout-shell { padding-bottom: 100px; }
+  .ie-checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* ---- Order summary ---- */
+  .ie-order-summary { padding: 28px; position: sticky; top: 100px; }
+  .ie-order-summary__plan { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .ie-order-summary__plan-name { font-size: 1.2rem; }
+  .ie-order-summary__badge {
+    font-family: var(--ie-font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 5px 12px; border-radius: var(--ie-r-pill); background: rgba(255,106,0,0.12); color: var(--ie-orange-400);
+  }
+  .ie-order-line {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; font-size: 0.9rem; color: var(--ie-text-muted);
+    border-bottom: 1px solid var(--ie-line);
+  }
+  .ie-order-line span:last-child { color: var(--ie-text); font-weight: 600; }
+  .ie-order-line--discount span:last-child { color: var(--ie-success); }
+  .ie-order-line--total { border-bottom: none; padding-top: 18px; }
+  .ie-order-line--total span:first-child { font-size: 1rem; color: var(--ie-text); font-weight: 700; }
+  .ie-order-line--total span:last-child { font-family: var(--ie-font-display); font-size: 1.7rem; color: var(--ie-orange-400); }
+
+  .ie-coupon-row { display: flex; gap: 8px; margin: 20px 0 6px; }
+  .ie-coupon-row input {
+    flex: 1; height: 46px; border-radius: var(--ie-r-md);
+    background: rgba(255,255,255,0.03); border: 1px solid var(--ie-glass-border);
+    color: var(--ie-text); padding: 0 14px; font-size: 0.85rem; text-transform: uppercase;
+  }
+  .ie-coupon-row input:focus { outline: none; border-color: var(--ie-orange-500); }
+  .ie-coupon-msg { font-size: 0.78rem; min-height: 16px; margin-bottom: 10px; }
+  .ie-coupon-msg[data-state="valid"] { color: var(--ie-success); }
+  .ie-coupon-msg[data-state="invalid"] { color: var(--ie-danger); }
+  .ie-coupon-applied {
+    display: none;
+    align-items: center; justify-content: space-between;
+    background: rgba(53,214,138,0.08); border: 1px solid rgba(53,214,138,0.3);
+    border-radius: var(--ie-r-md); padding: 10px 14px; font-size: 0.82rem; color: var(--ie-success);
+    margin-bottom: 10px;
+  }
+  .ie-coupon-applied.is-visible { display: flex; }
+  .ie-coupon-applied button { background: none; border: none; color: var(--ie-success); text-decoration: underline; font-size: 0.78rem; }
+
+  .ie-secure-note { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--ie-ash); margin-top: 20px; }
+  .ie-secure-note i { color: var(--ie-success); }
+
+  /* ---- Checkout form ---- */
+  .ie-checkout-card { padding: 32px; }
+  .ie-checkout-card h2 { font-size: 1.3rem; margin-bottom: 22px; }
+
+  .ie-field-row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+
+  .ie-pay-methods { display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
+  .ie-pay-method {
+    flex: 1; min-width: 110px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 14px 10px; border-radius: var(--ie-r-md);
+    border: 1px solid var(--ie-glass-border); background: rgba(255,255,255,0.02);
+    font-size: 0.78rem; color: var(--ie-text-muted);
+    transition: border-color var(--ie-dur-fast), color var(--ie-dur-fast), background var(--ie-dur-fast);
+  }
+  .ie-pay-method i { font-size: 1.2rem; }
+  .ie-pay-method.is-active { border-color: var(--ie-orange-500); color: var(--ie-orange-400); background: rgba(255,106,0,0.06); }
+
+  .ie-card-preview {
+    width: 100%; aspect-ratio: 1.6/1; max-width: 340px;
+    border-radius: 18px; margin: 0 auto 24px;
+    background: linear-gradient(135deg, var(--ie-surface-2), var(--ie-surface-1) 60%, #1c1310);
+    border: 1px solid var(--ie-glass-border);
+    box-shadow: var(--ie-shadow-2);
+    padding: 22px; display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .ie-card-preview::after {
+    content: ''; position: absolute; width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,106,0,0.35), transparent 70%);
+    top: -60px; right: -60px;
+  }
+  .ie-card-preview__chip { width: 40px; height: 30px; border-radius: 6px; background: linear-gradient(135deg,#ffb347,#c94e00); }
+  .ie-card-preview__number { font-family: var(--ie-font-mono); font-size: 1.15rem; letter-spacing: 0.12em; color: var(--ie-ink); z-index: 1; }
+  .ie-card-preview__bottom { display: flex; justify-content: space-between; align-items: flex-end; z-index: 1; }
+  .ie-card-preview__name { font-size: 0.82rem; text-transform: uppercase; color: var(--ie-ink-dim); }
+  .ie-card-preview__brand { font-family: var(--ie-font-display); font-size: 1rem; color: var(--ie-orange-400); }
+
+  /* ---- Success view ---- */
+  #ie-payment-success { display: none; text-align: center; max-width: 560px; margin-inline: auto; padding: 56px 40px; }
+  #ie-payment-success.is-visible { display: block; }
+  .ie-success-icon {
+    width: 84px; height: 84px; border-radius: 50%; margin: 0 auto 22px;
+    background: rgba(53,214,138,0.12); color: var(--ie-success);
+    display: flex; align-items: center; justify-content: center; font-size: 2.2rem;
+    animation: ie-scale-in 0.5s var(--ie-ease) both;
+  }
+  .ie-success-summary {
+    text-align: left; margin: 28px 0; border: 1px solid var(--ie-line); border-radius: var(--ie-r-md);
+    padding: 18px 20px;
+  }
+  .ie-success-summary .ie-order-line:last-child { border-bottom: none; }
+  .ie-success-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 26px; }
+
+  #ie-checkout-view.is-hidden { display: none; }
+
+  @media (min-width: 960px) {
+    .ie-checkout-grid { grid-template-columns: 0.9fr 1.1fr; }
+    .ie-field-row.ie-field-row--2 { grid-template-columns: 1fr 1fr; }
+    .ie-field-row.ie-field-row--3 { grid-template-columns: 1fr 1fr 1fr; }
+  }
+</style>
+
+</head>
+<body data-page="payment" data-components-base="../components/">
+
+  <div id="ie-loader-slot"></div>
+  <div id="ie-navbar-slot"></div>
+
+  <main>
+    <section id="ie-payment-hero">
+      <div class="ie-container">
+        <p class="ie-eyebrow" data-reveal>Secure Checkout</p>
+        <h1 class="ie-heading-lg" data-reveal>Complete your <span class="ie-text-gradient">membership purchase</span></h1>
+      </div>
+    </section>
+
+    <section class="ie-checkout-shell">
+      <div class="ie-container">
+
+        <!-- ============================ CHECKOUT VIEW ============================ -->
+        <div id="ie-checkout-view">
+          <div class="ie-checkout-grid">
+
+            <!-- Order Summary -->
+            <div class="ie-glass ie-order-summary" data-reveal>
+              <div class="ie-order-summary__plan">
+                <div>
+                  <p class="ie-order-summary__plan-name" id="ie-summary-plan-name">Premium</p>
+                  <p style="font-size:0.8rem; color:var(--ie-text-muted);" id="ie-summary-duration-label">Billed yearly</p>
+                </div>
+                <span class="ie-order-summary__badge" id="ie-summary-badge">Most Popular</span>
+              </div>
+
+              <div class="ie-order-line">
+                <span>Subtotal</span>
+                <span id="ie-summary-subtotal">$0.00</span>
+              </div>
+              <div class="ie-order-line ie-order-line--discount" id="ie-summary-discount-row" style="display:none;">
+                <span id="ie-summary-discount-label">Coupon discount</span>
+                <span id="ie-summary-discount">-$0.00</span>
+              </div>
+              <div class="ie-order-line ie-order-line--total">
+                <span>Total due today</span>
+                <span id="ie-summary-total">$0.00</span>
+              </div>
+
+              <form id="ie-coupon-form" novalidate>
+                <div class="ie-coupon-row">
+                  <input type="text" id="ie-coupon-input" placeholder="Coupon code (e.g. IRON10)" autocomplete="off">
+                  <button type="submit" class="ie-btn ie-btn-ghost ie-btn-sm">Apply</button>
+                </div>
+              </form>
+              <p class="ie-coupon-msg" id="ie-coupon-msg"></p>
+              <div class="ie-coupon-applied" id="ie-coupon-applied">
+                <span><i class="fa-solid fa-tag"></i> <span id="ie-coupon-applied-text"></span></span>
+                <button type="button" id="ie-coupon-remove">Remove</button>
+              </div>
+
+              <p class="ie-secure-note"><i class="fa-solid fa-shield-halved"></i> 256-bit encrypted &amp; PCI-aware checkout</p>
+            </div>
+
+            <!-- Checkout Form -->
+            <div class="ie-glass ie-checkout-card" data-reveal>
+              <h2>Payment details</h2>
+
+              <div class="ie-form-banner" data-form-banner role="alert"></div>
+
+              <div class="ie-pay-methods">
+                <button type="button" class="ie-pay-method is-active" data-pay-method="card">
+                  <i class="fa-solid fa-credit-card"></i> Card
+                </button>
+                <button type="button" class="ie-pay-method" data-pay-method="upi">
+                  <i class="fa-solid fa-mobile-screen"></i> UPI
+                </button>
+                <button type="button" class="ie-pay-method" data-pay-method="paypal">
+                  <i class="fa-brands fa-paypal"></i> PayPal
+                </button>
+              </div>
+
+              <div class="ie-card-preview">
+                <div class="ie-card-preview__chip"></div>
+                <p class="ie-card-preview__number" id="ie-card-preview-number">•••• •••• •••• ••••</p>
+                <div class="ie-card-preview__bottom">
+                  <span class="ie-card-preview__name" id="ie-card-preview-name">YOUR NAME</span>
+                  <span class="ie-card-preview__brand">IRON EDGE</span>
+                </div>
+              </div>
+
+              <form id="ie-payment-form" novalidate>
+                <div class="ie-field-row ie-field-row--2">
+                  <div class="ie-field">
+                    <label for="ie-pay-name">Full name</label>
+                    <div class="ie-field__wrap">
+                      <i class="fa-solid fa-user ie-field__icon"></i>
+                      <input type="text" id="ie-pay-name" placeholder="Jordan Diaz" autocomplete="cc-name" required>
+                    </div>
+                    <span class="ie-field__error"></span>
+                  </div>
+                  <div class="ie-field">
+                    <label for="ie-pay-email">Email</label>
+                    <div class="ie-field__wrap">
+                      <i class="fa-solid fa-envelope ie-field__icon"></i>
+                      <input type="email" id="ie-pay-email" placeholder="you@example.com" autocomplete="email" required>
+                    </div>
+                    <span class="ie-field__error"></span>
+                  </div>
+                </div>
+
+                <div class="ie-field">
+                  <label for="ie-pay-card-number">Card number</label>
+                  <div class="ie-field__wrap">
+                    <i class="fa-solid fa-credit-card ie-field__icon"></i>
+                    <input type="text" id="ie-pay-card-number" placeholder="1234 5678 9012 3456" inputmode="numeric" maxlength="19" autocomplete="cc-number" required>
+                  </div>
+                  <span class="ie-field__error"></span>
+                </div>
+
+                <div class="ie-field-row ie-field-row--2">
+                  <div class="ie-field">
+                    <label for="ie-pay-expiry">Expiry (MM/YY)</label>
+                    <div class="ie-field__wrap">
+                      <i class="fa-solid fa-calendar ie-field__icon"></i>
+                      <input type="text" id="ie-pay-expiry" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp" required>
+                    </div>
+                    <span class="ie-field__error"></span>
+                  </div>
+                  <div class="ie-field">
+                    <label for="ie-pay-cvv">CVV</label>
+                    <div class="ie-field__wrap">
+                      <i class="fa-solid fa-lock ie-field__icon"></i>
+                      <input type="password" id="ie-pay-cvv" placeholder="123" maxlength="4" inputmode="numeric" autocomplete="cc-csc" required>
+                    </div>
+                    <span class="ie-field__error"></span>
+                  </div>
+                </div>
+
+                <label class="ie-checkbox" style="margin-bottom:22px;">
+                  <input type="checkbox" id="ie-pay-save-card">
+                  Save this card for faster renewals
+                </label>
+
+                <button type="submit" class="ie-btn ie-btn-primary" data-submit-btn style="width:100%;">
+                  <span class="ie-btn-label"><i class="fa-solid fa-lock"></i> Pay <span id="ie-pay-btn-total">$0.00</span></span>
+                  <span class="ie-btn-spinner"></span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================ SUCCESS VIEW ============================ -->
+        <div id="ie-payment-success" class="ie-glass">
+          <div class="ie-success-icon"><i class="fa-solid fa-check"></i></div>
+          <h2 class="ie-heading-md">Payment successful</h2>
+          <p class="ie-lead" style="margin-inline:auto; text-align:center;">
+            Your <span id="ie-success-plan-name">Premium</span> membership is now active. A receipt has been sent to your email.
+          </p>
+
+          <div class="ie-success-summary">
+            <div class="ie-order-line"><span>Invoice ID</span><span id="ie-success-invoice-id">—</span></div>
+            <div class="ie-order-line"><span>Plan</span><span id="ie-success-plan">—</span></div>
+            <div class="ie-order-line"><span>Billing cycle</span><span id="ie-success-duration">—</span></div>
+            <div class="ie-order-line"><span>Amount paid</span><span id="ie-success-total">$0.00</span></div>
+            <div class="ie-order-line"><span>Valid until</span><span id="ie-success-expiry">—</span></div>
+          </div>
+
+          <div class="ie-success-actions">
+            <button type="button" class="ie-btn ie-btn-primary" id="ie-download-invoice-btn">
+              <i class="fa-solid fa-download"></i> Download Invoice
+            </button>
+            <a href="dashboard.html" class="ie-btn ie-btn-ghost">Go to Dashboard</a>
+            <a href="membership.html" class="ie-btn ie-btn-ghost">View Membership</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <div id="ie-footer-slot"></div>
+  <div id="ie-chat-slot"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script src="../js/main.js"></script>
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/payment.js"></script>
+</body>
+</html>

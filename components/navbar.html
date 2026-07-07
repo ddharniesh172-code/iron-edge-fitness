@@ -1,0 +1,91 @@
+<!-- ==========================================================================
+     IRON EDGE FITNESS — components/navbar.html
+     Fetched into #ie-navbar-slot by js/main.js (loadComponent). Contains
+     data-page attributes on links so main.js can mark the active route.
+     ========================================================================== -->
+<nav id="ie-navbar">
+  <div class="ie-nav-inner">
+    <a href="index.html" class="ie-logo" aria-label="Iron Edge Fitness — home">
+      <span class="ie-logo__mark"><i class="fa-solid fa-bolt"></i></span>
+      IRON <span class="ie-logo__text-sub">EDGE</span>
+    </a>
+
+    <ul class="ie-nav-links" role="menubar">
+      <li role="none"><a role="menuitem" data-page="home" href="index.html">Home</a></li>
+      <li role="none"><a role="menuitem" data-page="about" href="about.html">About</a></li>
+      <li role="none"><a role="menuitem" data-page="membership" href="membership.html">Membership</a></li>
+      <li role="none"><a role="menuitem" data-page="workout" href="workout.html">Workout</a></li>
+      <li role="none"><a role="menuitem" data-page="diet" href="diet.html">Diet</a></li>
+      <li role="none"><a role="menuitem" data-page="trainers" href="trainers.html">Trainers</a></li>
+      <li role="none"><a role="menuitem" data-page="shop" href="shop.html">Shop</a></li>
+      <li role="none"><a role="menuitem" data-page="community" href="community.html">Community</a></li>
+    </ul>
+
+    <div class="ie-nav-actions">
+      <button class="ie-icon-btn" id="ie-search-btn" aria-label="Search" aria-haspopup="dialog">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+
+      <div style="position:relative;">
+        <button class="ie-icon-btn" id="ie-notif-btn" aria-label="Notifications" aria-haspopup="true">
+          <i class="fa-regular fa-bell"></i>
+          <span class="ie-dot"></span>
+        </button>
+        <div class="ie-notif-panel ie-glass" id="ie-notif-panel" role="menu">
+          <div class="ie-notif-item">
+            <span class="ie-notif-item__icon"><i class="fa-solid fa-dumbbell"></i></span>
+            <div><p class="ie-notif-item__title">Leg day reminder</p><p class="ie-notif-item__time">Today · 6:00 PM</p></div>
+          </div>
+          <div class="ie-notif-item">
+            <span class="ie-notif-item__icon"><i class="fa-solid fa-droplet"></i></span>
+            <div><p class="ie-notif-item__title">You're 600ml behind on water</p><p class="ie-notif-item__time">2 hours ago</p></div>
+          </div>
+          <div class="ie-notif-item">
+            <span class="ie-notif-item__icon"><i class="fa-solid fa-medal"></i></span>
+            <div><p class="ie-notif-item__title">New PR on deadlift — nice work</p><p class="ie-notif-item__time">Yesterday</p></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="ie-icon-btn" id="ie-theme-toggle" aria-label="Toggle dark / light mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+
+      <select class="ie-lang-select" id="ie-lang-select" aria-label="Language">
+        <option value="en">EN</option>
+        <option value="es">ES</option>
+        <option value="fr">FR</option>
+        <option value="hi">HI</option>
+      </select>
+
+      <a href="membership.html" class="ie-btn ie-btn-primary ie-btn-sm">Join Now</a>
+
+      <button class="ie-nav-burger" id="ie-nav-burger" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ie-mobile-menu" id="ie-mobile-menu">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="membership.html">Membership</a>
+    <a href="workout.html">Workout</a>
+    <a href="diet.html">Diet</a>
+    <a href="trainers.html">Trainers</a>
+    <a href="shop.html">Shop</a>
+    <a href="community.html">Community</a>
+    <div class="ie-mobile-menu__actions">
+      <a href="membership.html" class="ie-btn ie-btn-primary">Join Now</a>
+      <a href="login.html" class="ie-btn ie-btn-ghost">Login</a>
+    </div>
+  </div>
+</nav>
+
+<div id="ie-search-modal">
+  <div class="ie-search-box ie-glass">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" id="ie-search-input" placeholder="Search workouts, trainers, products…" autocomplete="off">
+    <button class="ie-icon-btn" id="ie-search-close" aria-label="Close search"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+</div>
