@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Coach | IRON EDGE FITNESS</title>
+<meta name="description" content="Chat with your AI fitness coach for workout recommendations, diet advice, and goal-based guidance based on your own data.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<link rel="stylesheet" href="../css/workout.css">
+<link rel="stylesheet" href="../css/diet.css">
+<link rel="stylesheet" href="../css/dashboard.css">
+<link rel="stylesheet" href="../css/community.css">
+<link rel="stylesheet" href="../css/ai-coach.css">
+</head>
+<body class="ie-body">
+
+<!-- ================= NAVBAR ================= -->
+<header class="ie-navbar">
+  <div class="ie-navbar-inner">
+    <a href="../index.html" class="ie-logo">IRON<span>EDGE</span></a>
+    <nav class="ie-nav-links">
+      <a href="../index.html">Home</a>
+      <a href="workout.html">Workouts</a>
+      <a href="diet-planner.html">Diet</a>
+      <a href="community.html">Community</a>
+      <a href="ai-coach.html" class="active">AI Coach</a>
+      <a href="dashboard.html">Dashboard</a>
+    </nav>
+    <div class="ie-nav-actions">
+      <button class="ie-icon-btn ie-notif-bell" id="notifBellBtn" title="Notifications">
+        <i class="fa-solid fa-bell"></i>
+        <span class="ie-notif-dot" id="notifDot" style="display:none;"></span>
+      </button>
+      <a href="dashboard.html" class="ie-icon-btn" title="Dashboard"><i class="fa-solid fa-user"></i></a>
+      <button class="ie-hamburger" id="hamburgerBtn"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<div class="ie-notif-panel" id="notifPanel" style="display:none;">
+  <div class="ie-notif-panel-head">
+    <h3><i class="fa-solid fa-bell"></i> Notifications</h3>
+    <button class="ie-link-btn" id="markAllReadBtn">Mark all read</button>
+  </div>
+  <div class="ie-notif-list" id="notifList"></div>
+</div>
+
+<!-- ================= HERO ================= -->
+<section class="ie-workout-hero" style="padding-bottom:20px;">
+  <div class="ie-hero-glow"></div>
+  <div class="ie-hero-content">
+    <p class="ie-eyebrow">YOUR PERSONAL AI COACH</p>
+    <h1>Ask Your <span>AI Coach</span></h1>
+    <p class="ie-hero-sub">Get workout suggestions, diet advice, and BMI/BMR analysis based on your own logged data — available any time.</p>
+  </div>
+</section>
+
+<!-- ================= CHAT LAYOUT ================= -->
+<section class="ie-section ie-coach-layout">
+
+  <!-- LEFT: Quick Insights + Prompts -->
+  <aside class="ie-coach-sidebar">
+    <div class="ie-sidebar-card glass-card">
+      <h4><i class="fa-solid fa-chart-simple"></i> Your Snapshot</h4>
+      <div class="ie-coach-snapshot" id="coachSnapshot">
+        <div><span id="snapshotBmi">--</span><small>BMI</small></div>
+        <div><span id="snapshotBmr">--</span><small>BMR</small></div>
+        <div><span id="snapshotStreak">0</span><small>Streak</small></div>
+        <div><span id="snapshotGoal">--</span><small>Goal</small></div>
+      </div>
+    </div>
+
+    <div class="ie-sidebar-card glass-card">
+      <h4><i class="fa-solid fa-wand-magic-sparkles"></i> Quick Questions</h4>
+      <div class="ie-quick-prompts" id="quickPrompts"></div>
+    </div>
+
+    <div class="ie-sidebar-card glass-card">
+      <h4><i class="fa-solid fa-clock-rotate-left"></i> Chat History</h4>
+      <div class="ie-chat-history-list" id="chatHistoryList"></div>
+      <button class="ie-link-btn" id="newChatBtn" style="margin-top:10px;"><i class="fa-solid fa-plus"></i> New Chat</button>
+    </div>
+  </aside>
+
+  <!-- CENTER: Chat Window -->
+  <div class="ie-chat-window glass-card">
+    <div class="ie-chat-header">
+      <div class="ie-coach-avatar"><i class="fa-solid fa-robot"></i></div>
+      <div>
+        <h3>Iron Edge AI Coach</h3>
+        <p class="ie-coach-status" id="coachStatus"><span class="ie-status-dot"></span> Online — analyzing your data</p>
+      </div>
+      <button class="ie-icon-btn" id="clearChatBtn" title="Clear conversation"><i class="fa-solid fa-trash"></i></button>
+    </div>
+
+    <div class="ie-chat-messages" id="chatMessages"></div>
+
+    <div class="ie-chat-input-row">
+      <input type="text" id="chatInput" placeholder="Ask about your workout, diet, BMI, or goals...">
+      <button class="ie-btn-primary-sm" id="chatSendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </div>
+</section>
+
+<div id="toast" class="ie-toast"></div>
+
+<footer class="ie-footer">
+  <p>&copy; 2026 IRON EDGE FITNESS. All rights reserved.</p>
+</footer>
+
+<script src="../js/firebase-config.js"></script>
+<script src="../firebase/workout.js"></script>
+<script src="../firebase/diet.js"></script>
+<script src="../firebase/notifications.js"></script>
+<script src="../firebase/ai-coach.js"></script>
+<script src="../js/exercise-data.js"></script>
+<script src="../js/food-data.js"></script>
+<script src="../js/achievements-data.js"></script>
+<script src="../js/ai-recommendations.js"></script>
+<script src="../js/notifications.js"></script>
+<script src="../js/ai-coach.js"></script>
+</body>
+</html>

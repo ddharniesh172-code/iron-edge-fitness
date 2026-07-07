@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Iron Edge Fitness</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body data-admin-page="dashboard">
+
+  <div class="ie-admin-shell">
+    <div id="ie-sidebar-slot"></div>
+
+    <main class="ie-admin-main">
+      <div class="ie-admin-topbar">
+        <div>
+          <h1>Dashboard Overview</h1>
+          <p>A live snapshot of members, revenue, and activity across Iron Edge Fitness.</p>
+        </div>
+        <div class="ie-admin-topbar-actions">
+          <button type="button" class="ie-btn ie-btn-ghost ie-btn-sm" id="ie-refresh-dashboard">
+            <i class="fa-solid fa-rotate"></i> Refresh
+          </button>
+        </div>
+      </div>
+
+      <div class="ie-admin-stat-grid" id="ie-stat-grid">
+        <!-- Stat cards injected by inline script below -->
+      </div>
+
+      <div class="ie-admin-card" id="ie-secondary-stats">
+        <div class="ie-admin-card__head">
+          <div>
+            <h2>Product &amp; Program Activity</h2>
+            <p>Units sold, workouts logged, and diet entries tracked.</p>
+          </div>
+        </div>
+        <div class="ie-admin-stat-grid" id="ie-secondary-stat-grid" style="margin-bottom:0;"></div>
+      </div>
+
+      <div class="ie-field-row ie-field-row--2" style="display:grid; gap:24px; grid-template-columns:1fr;">
+        <div class="ie-admin-card">
+          <div class="ie-admin-card__head">
+            <div><h2>Revenue (last 6 months)</h2><p>Combined membership + shop revenue</p></div>
+          </div>
+          <div class="ie-chart-card"><canvas id="ie-chart-revenue"></canvas></div>
+        </div>
+
+        <div class="ie-field-row ie-field-row--2">
+          <div class="ie-admin-card">
+            <div class="ie-admin-card__head"><div><h2>Membership Growth</h2></div></div>
+            <div class="ie-chart-card ie-chart-card--sm"><canvas id="ie-chart-membership-growth"></canvas></div>
+          </div>
+          <div class="ie-admin-card">
+            <div class="ie-admin-card__head"><div><h2>User Growth</h2></div></div>
+            <div class="ie-chart-card ie-chart-card--sm"><canvas id="ie-chart-user-growth"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ie-admin-card">
+        <div class="ie-admin-card__head">
+          <div><h2>Recent User Activity</h2><p>Most recently active accounts</p></div>
+          <a href="users.html" class="ie-btn ie-btn-ghost ie-btn-sm">View All Users</a>
+        </div>
+        <div class="ie-admin-table-wrap">
+          <table class="ie-admin-table">
+            <thead>
+              <tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Last Login</th></tr>
+            </thead>
+            <tbody id="ie-recent-activity-body">
+              <tr class="ie-admin-empty-row"><td colspan="5">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="ie-toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="ie-toast-text">Updated</span>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="../js/admin.js" type="module"></script>
+
+  <script type="module">
+    import {
+      getDashboardStats,
+      getRevenueByMonth,
+      getUserGrowth,
+      getMembershipGrowth,
+      getWorkoutStats,
+      getDietStats,
+    } from '../firebase/admin.js';
+
+    const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n || 0);
+    const $ = (s) => document.querySelector(s);
+
+    function statCard({ icon, value, label }) {
+      return `
+        <div class="ie-glass ie-card ie-admin-stat-card" data-reveal>
+          <div>
+            <p class="ie-admin-stat-card__value">${value}</p>
+            <p class="ie-admin-stat-card__label">${label}</p>
+          </div>
+          <span class="ie-admin-stat-card__icon"><i class="${icon}"></i></span>
+        </div>`;
+    }
+
+    async function renderStats() {
+      const stats = await getDashboardStats();
+      $('#ie-stat-grid').innerHTML = [
+        statCard({ icon: 'fa-solid fa-users', value: stats.totalMembers, label: 'Total Members' }),
+        statCard({ icon: 'fa-solid fa-id-card', value: stats.activeMemberships, label: 'Active Memberships' }),
+        statCard({ icon: 'fa-solid fa-id-card-clip', value: stats.expiredMemberships, label: 'Expired Memberships' }),
+        statCard({ icon: 'fa-solid fa-sack-dollar', value: money(stats.totalRevenue), label: 'Total Revenue' }),
+        statCard({ icon: 'fa-solid fa-calendar-day', value: money(stats.todayRevenue), label: "Today's Revenue" }),
+        statCard({ icon: 'fa-solid fa-calendar-days', value: money(stats.monthRevenue), label: 'This Month\'s Revenue' }),
+        statCard({ icon: 'fa-solid fa-bag-shopping', value: stats.totalOrders, label: 'Total Orders' }),
+        statCard({ icon: 'fa-solid fa-receipt', value: stats.totalPayments, label: 'Membership Payments' }),
+      ].join('');
+
+      const activityBody = $('#ie-recent-activity-body');
+      if (!stats.recentUsers.length) {
+        activityBody.innerHTML = `<tr class="ie-admin-empty-row"><td colspan="5">No user activity yet.</td></tr>`;
+      } else {
+        activityBody.innerHTML = stats.recentUsers
+          .map((u) => {
+            const last = u.lastLogin?.toDate ? u.lastLogin.toDate().toLocaleString() : '—';
+            const roleTone = u.role === 'admin' ? 'brand' : 'neutral';
+            const statusTone = u.status === 'suspended' ? 'danger' : 'success';
+            return `
+            <tr>
+              <td><span class="ie-table-avatar">${(u.name || '?')[0]?.toUpperCase()}</span>${u.name || 'Unnamed'}</td>
+              <td>${u.email || '—'}</td>
+              <td><span class="ie-badge" data-tone="${roleTone}">${u.role || 'member'}</span></td>
+              <td><span class="ie-badge" data-tone="${statusTone}">${u.status || 'active'}</span></td>
+              <td>${last}</td>
+            </tr>`;
+          })
+          .join('');
+      }
+    }
+
+    async function renderSecondaryStats() {
+      const [workout, diet, revenueSoFar] = await Promise.all([getWorkoutStats(), getDietStats(), Promise.resolve(null)]);
+      $('#ie-secondary-stat-grid').innerHTML = [
+        statCard({ icon: 'fa-solid fa-dumbbell', value: workout.totalSessions, label: 'Workouts Logged' }),
+        statCard({ icon: 'fa-solid fa-fire', value: workout.totalCaloriesBurned, label: 'Calories Burned (Logged)' }),
+        statCard({ icon: 'fa-solid fa-utensils', value: diet.totalLogs, label: 'Diet Entries Logged' }),
+        statCard({ icon: 'fa-solid fa-chart-simple', value: diet.avgCalories, label: 'Avg. Calories / Entry' }),
+      ].join('');
+    }
+
+    function lineChart(canvasId, labels, data, color) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 0, 220);
+      grad.addColorStop(0, color.replace('1)', '0.35)'));
+      grad.addColorStop(1, color.replace('1)', '0)'));
+      return new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets: [{ data, borderColor: color, backgroundColor: grad, fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { grid: { display: false }, ticks: { color: '#8f887f', font: { size: 10 } } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8f887f', font: { size: 10 } } } },
+        },
+      });
+    }
+
+    function barChart(canvasId, labels, data, color) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      return new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets: [{ data, backgroundColor: color, borderRadius: 6, maxBarThickness: 28 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { grid: { display: false }, ticks: { color: '#8f887f', font: { size: 10 } } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8f887f', font: { size: 10 } } } },
+        },
+      });
+    }
+
+    async function renderCharts() {
+      const [revenue, userGrowth, membershipGrowth] = await Promise.all([
+        getRevenueByMonth(6), getUserGrowth(6), getMembershipGrowth(6),
+      ]);
+      lineChart('ie-chart-revenue', revenue.map((r) => r.label), revenue.map((r) => r.total), 'rgba(255,143,63,1)');
+      lineChart('ie-chart-user-growth', userGrowth.map((r) => r.label), userGrowth.map((r) => r.count), 'rgba(78,203,255,1)');
+      barChart('ie-chart-membership-growth', membershipGrowth.map((r) => r.label), membershipGrowth.map((r) => r.count), 'rgba(255,106,0,0.85)');
+    }
+
+    async function loadEverything() {
+      await Promise.all([renderStats(), renderSecondaryStats(), renderCharts()]);
+    }
+
+    (async () => {
+      const session = await window.IEAdmin.requireAdmin();
+      if (!session) return;
+      await loadEverything();
+      document.getElementById('ie-refresh-dashboard').addEventListener('click', async () => {
+        window.IEAdmin.toast('Refreshing…');
+        await loadEverything();
+      });
+    })();
+  </script>
+</body>
+</html>

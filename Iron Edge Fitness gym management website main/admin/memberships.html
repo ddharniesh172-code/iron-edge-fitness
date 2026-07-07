@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Membership Management — Iron Edge Fitness Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body data-admin-page="memberships">
+
+  <div class="ie-admin-shell">
+    <div id="ie-sidebar-slot"></div>
+
+    <main class="ie-admin-main">
+      <div class="ie-admin-topbar">
+        <div>
+          <h1>Membership Management</h1>
+          <p>Track active/expired memberships, renew on a member's behalf, and manage the plan catalog.</p>
+        </div>
+      </div>
+
+      <!-- ============================== EXPIRY ALERTS ============================== -->
+      <div class="ie-admin-card">
+        <div class="ie-admin-card__head">
+          <div><h2>Expiring Soon</h2><p>Memberships expiring within the next 7 days</p></div>
+        </div>
+        <div id="ie-expiry-alerts-list"><p style="color:var(--ie-text-muted); font-size:0.85rem;">Loading…</p></div>
+      </div>
+
+      <!-- ============================= ALL MEMBERSHIPS ============================== -->
+      <div class="ie-admin-card">
+        <div class="ie-admin-card__head">
+          <div><h2>All Memberships</h2><p>Every member's current plan and status</p></div>
+        </div>
+        <div class="ie-admin-table-wrap">
+          <table class="ie-admin-table">
+            <thead>
+              <tr><th>User</th><th>Plan</th><th>Billing</th><th>Price</th><th>Status</th><th>Expiry</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="ie-memberships-table-body">
+              <tr class="ie-admin-empty-row"><td colspan="7">Loading memberships…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- =============================== PLAN CATALOG =============================== -->
+      <div class="ie-admin-card">
+        <div class="ie-admin-card__head">
+          <div><h2>Plan Catalog</h2><p>Admin-editable plans (Firestore-backed)</p></div>
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="ie-btn ie-btn-ghost ie-btn-sm" id="ie-seed-plans-btn"><i class="fa-solid fa-download"></i> Seed From Defaults</button>
+            <button type="button" class="ie-btn ie-btn-primary ie-btn-sm" id="ie-add-plan-btn"><i class="fa-solid fa-plus"></i> Add Plan</button>
+          </div>
+        </div>
+        <div class="ie-admin-table-wrap">
+          <table class="ie-admin-table">
+            <thead>
+              <tr><th>ID</th><th>Name</th><th>Tagline</th><th>Monthly Price</th><th>Badge</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="ie-plans-table-body">
+              <tr class="ie-admin-empty-row"><td colspan="6">No plans yet — click "Seed From Defaults" to get started.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ================================ PLAN MODAL ================================ -->
+  <div class="ie-admin-modal" id="ie-plan-modal">
+    <div class="ie-glass ie-admin-modal-panel">
+      <button type="button" class="ie-icon-btn ie-admin-modal-close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <h2 id="ie-plan-modal-title">Add Plan</h2>
+      <div class="ie-form-banner" data-form-banner role="alert"></div>
+      <form id="ie-plan-form" novalidate>
+        <input type="hidden" id="ie-plan-original-id">
+        <div class="ie-field">
+          <label for="ie-plan-id">Plan ID (slug, e.g. "elite")</label>
+          <input type="text" id="ie-plan-id" required>
+        </div>
+        <div class="ie-field">
+          <label for="ie-plan-name">Name</label>
+          <input type="text" id="ie-plan-name" required>
+        </div>
+        <div class="ie-field">
+          <label for="ie-plan-tagline">Tagline</label>
+          <input type="text" id="ie-plan-tagline">
+        </div>
+        <div class="ie-field-row ie-field-row--2">
+          <div class="ie-field">
+            <label for="ie-plan-price">Monthly Price ($)</label>
+            <input type="number" id="ie-plan-price" min="0" step="0.01" required>
+          </div>
+          <div class="ie-field">
+            <label for="ie-plan-badge">Badge (optional)</label>
+            <input type="text" id="ie-plan-badge" placeholder="e.g. Most Popular">
+          </div>
+        </div>
+        <button type="submit" class="ie-btn ie-btn-primary" data-submit-btn style="width:100%;">
+          <span class="ie-btn-label"><i class="fa-solid fa-floppy-disk"></i> Save Plan</span>
+          <span class="ie-btn-spinner"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="ie-toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="ie-toast-text">Updated</span>
+  </div>
+
+  <script src="../js/admin.js" type="module"></script>
+
+  <script type="module">
+    import {
+      getAllMemberships, setMembershipStatus, renewMembershipByAdmin, getExpiringMemberships,
+      getAdminPlans, createPlan, updatePlan, deletePlan, seedPlansFromCatalog, listAllUsers,
+    } from '../firebase/admin.js';
+    import { PLAN_CATALOG, DURATIONS } from '../js/firebase.js';
+
+    const $ = (s, ctx = document) => ctx.querySelector(s);
+    const $$ = (s, ctx = document) => Array.from(ctx.querySelectorAll(s));
+    const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n || 0);
+    const fmtDate = (ts) => (ts?.toDate ? ts.toDate().toLocaleDateString() : '—');
+
+    let usersById = {};
+
+    function planName(planId) {
+      return PLAN_CATALOG[planId]?.name || planId;
+    }
+
+    /* ------------------------------------------------------------ expiry alerts */
+    async function renderExpiryAlerts() {
+      const expiring = await getExpiringMemberships(7);
+      const list = $('#ie-expiry-alerts-list');
+      if (!expiring.length) {
+        list.innerHTML = `<p style="color:var(--ie-text-muted); font-size:0.85rem;">Nothing expiring in the next 7 days.</p>`;
+        return;
+      }
+      list.innerHTML = expiring
+        .map((m) => {
+          const user = usersById[m.uid];
+          const expiry = m.expiryDate?.toDate ? m.expiryDate.toDate() : null;
+          const daysLeft = expiry ? Math.ceil((expiry - new Date()) / 86400000) : '—';
+          return `
+          <div class="ie-alert-item">
+            <span><i class="fa-solid fa-triangle-exclamation ie-alert-item__icon"></i>
+              <strong>${user?.name || m.uid}</strong> — ${planName(m.plan)} expires in ${daysLeft} day(s) (${fmtDate(m.expiryDate)})
+            </span>
+            <button type="button" class="ie-btn ie-btn-ghost ie-btn-sm" data-quick-renew="${m.uid}">Renew 1mo</button>
+          </div>`;
+        })
+        .join('');
+      $$('[data-quick-renew]', list).forEach((btn) =>
+        btn.addEventListener('click', async () => {
+          await renewMembershipByAdmin(btn.dataset.quickRenew, 1);
+          window.IEAdmin.toast('Membership renewed 1 month');
+          await loadMemberships();
+        })
+      );
+    }
+
+    /* --------------------------------------------------------- memberships table */
+    async function renderMembershipsTable() {
+      const memberships = await getAllMemberships();
+      const body = $('#ie-memberships-table-body');
+      if (!memberships.length) {
+        body.innerHTML = `<tr class="ie-admin-empty-row"><td colspan="7">No memberships yet.</td></tr>`;
+        return;
+      }
+      const now = new Date();
+      body.innerHTML = memberships
+        .map((m) => {
+          const user = usersById[m.uid];
+          const expiry = m.expiryDate?.toDate ? m.expiryDate.toDate() : null;
+          const computedState = expiry && expiry > now ? 'active' : 'expired';
+          const tone = computedState === 'active' ? 'success' : 'danger';
+          return `
+          <tr>
+            <td><span class="ie-table-avatar">${(user?.name || '?')[0]?.toUpperCase()}</span>${user?.name || m.uid}</td>
+            <td>${planName(m.plan)}</td>
+            <td>${DURATIONS[m.duration]?.label || m.duration}</td>
+            <td>${money(m.price)}</td>
+            <td>
+              <select class="ie-admin-filter-select" data-status-select="${m.uid}" style="height:34px; font-size:0.76rem;">
+                <option value="active" ${computedState === 'active' ? 'selected' : ''}>Active</option>
+                <option value="expired" ${computedState === 'expired' ? 'selected' : ''}>Expired</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="pending">Pending Approval</option>
+              </select>
+            </td>
+            <td>${fmtDate(m.expiryDate)}</td>
+            <td>
+              <div class="ie-table-actions">
+                <button type="button" class="ie-table-action-btn" data-renew="${m.uid}" aria-label="Renew 1 month"><i class="fa-solid fa-rotate"></i></button>
+              </div>
+            </td>
+          </tr>`;
+        })
+        .join('');
+
+      $$('[data-status-select]', body).forEach((sel) =>
+        sel.addEventListener('change', async () => {
+          await setMembershipStatus(sel.dataset.statusSelect, sel.value);
+          window.IEAdmin.toast('Membership status updated');
+        })
+      );
+      $$('[data-renew]', body).forEach((btn) =>
+        btn.addEventListener('click', async () => {
+          await renewMembershipByAdmin(btn.dataset.renew, 1);
+          window.IEAdmin.toast('Membership renewed 1 month');
+          await loadMemberships();
+        })
+      );
+    }
+
+    async function loadMemberships() {
+      const users = await listAllUsers();
+      usersById = Object.fromEntries(users.map((u) => [u.id, u]));
+      await Promise.all([renderExpiryAlerts(), renderMembershipsTable()]);
+    }
+
+    /* -------------------------------------------------------------- plan catalog */
+    async function renderPlans() {
+      const plans = await getAdminPlans();
+      const body = $('#ie-plans-table-body');
+      if (!plans.length) {
+        body.innerHTML = `<tr class="ie-admin-empty-row"><td colspan="6">No plans yet — click "Seed From Defaults" to get started.</td></tr>`;
+        return;
+      }
+      body.innerHTML = plans
+        .map(
+          (p) => `
+        <tr>
+          <td>${p.id}</td>
+          <td>${p.name}</td>
+          <td>${p.tagline || '—'}</td>
+          <td>${money(p.monthlyPrice)}</td>
+          <td>${p.badge ? `<span class="ie-badge" data-tone="brand">${p.badge}</span>` : '—'}</td>
+          <td>
+            <div class="ie-table-actions">
+              <button type="button" class="ie-table-action-btn" data-edit-plan="${p.id}" aria-label="Edit"><i class="fa-solid fa-pen"></i></button>
+              <button type="button" class="ie-table-action-btn" data-delete-plan="${p.id}" aria-label="Delete"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>`
+        )
+        .join('');
+
+      $$('[data-edit-plan]', body).forEach((btn) =>
+        btn.addEventListener('click', async () => {
+          const plans2 = await getAdminPlans();
+          const plan = plans2.find((p) => p.id === btn.dataset.editPlan);
+          openPlanModal(plan);
+        })
+      );
+      $$('[data-delete-plan]', body).forEach((btn) =>
+        btn.addEventListener('click', async () => {
+          if (!confirm('Delete this plan from the catalog?')) return;
+          await deletePlan(btn.dataset.deletePlan);
+          window.IEAdmin.toast('Plan deleted');
+          await renderPlans();
+        })
+      );
+    }
+
+    function openPlanModal(plan) {
+      $('#ie-plan-modal-title').textContent = plan ? 'Edit Plan' : 'Add Plan';
+      $('#ie-plan-original-id').value = plan?.id || '';
+      $('#ie-plan-id').value = plan?.id || '';
+      $('#ie-plan-id').disabled = !!plan;
+      $('#ie-plan-name').value = plan?.name || '';
+      $('#ie-plan-tagline').value = plan?.tagline || '';
+      $('#ie-plan-price').value = plan?.monthlyPrice || '';
+      $('#ie-plan-badge').value = plan?.badge || '';
+      window.IEAdmin.openModal('ie-plan-modal');
+    }
+
+    $('#ie-add-plan-btn').addEventListener('click', () => openPlanModal(null));
+
+    $('#ie-plan-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const originalId = $('#ie-plan-original-id').value;
+      const id = $('#ie-plan-id').value.trim().toLowerCase().replace(/\s+/g, '-');
+      const data = {
+        id,
+        name: $('#ie-plan-name').value.trim(),
+        tagline: $('#ie-plan-tagline').value.trim(),
+        monthlyPrice: parseFloat($('#ie-plan-price').value) || 0,
+        badge: $('#ie-plan-badge').value.trim() || null,
+      };
+      if (originalId) await updatePlan(originalId, data);
+      else await createPlan(id, data);
+
+      window.IEAdmin.closeModal('ie-plan-modal');
+      window.IEAdmin.toast('Plan saved');
+      await renderPlans();
+    });
+
+    $('#ie-seed-plans-btn').addEventListener('click', async () => {
+      await seedPlansFromCatalog(PLAN_CATALOG);
+      window.IEAdmin.toast('Default plans seeded');
+      await renderPlans();
+    });
+
+    (async () => {
+      const session = await window.IEAdmin.requireAdmin();
+      if (!session) return;
+      await loadMemberships();
+      await renderPlans();
+    })();
+  </script>
+</body>
+</html>

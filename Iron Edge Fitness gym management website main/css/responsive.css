@@ -1,0 +1,96 @@
+/* ==========================================================================
+   IRON EDGE FITNESS — responsive.css
+   Mobile-first base lives in style.css using clamp()/grid where possible.
+   This file layers breakpoint-specific overrides, largest to smallest is
+   avoided — rules read min-width up, matching the mobile-first approach.
+   ========================================================================== */
+
+/* ---- Base / Mobile (<600px) already assumed unless overridden below ---- */
+.ie-nav-links,
+.ie-lang-select { display: none; }
+
+.ie-nav-burger { display: flex; }
+
+.ie-stats-grid { grid-template-columns: repeat(2, 1fr); }
+.ie-stat:nth-child(2) { border-right: none; }
+.ie-stat { border-bottom: 1px solid var(--ie-line); padding-bottom: 24px; }
+.ie-stat:nth-child(3), .ie-stat:nth-child(4) { border-bottom: none; }
+
+.ie-dash-grid { grid-template-columns: 1fr; }
+.ie-goal-metrics { grid-template-columns: 1fr; }
+.ie-quick-grid { grid-template-columns: 1fr; }
+.ie-feature-grid { grid-template-columns: repeat(2, 1fr); }
+.ie-footer-grid { grid-template-columns: 1fr 1fr; }
+.ie-footer-brand { grid-column: 1 / -1; }
+
+.ie-membership-banner { padding: 40px 24px; flex-direction: column; align-items: flex-start; }
+.ie-membership-banner__badge { position: static; margin-bottom: 16px; }
+
+.ie-section { padding-block: 64px; }
+#ie-dash-preview { padding-block: 72px; }
+
+.ie-mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  background: var(--ie-surface-0);
+  padding: calc(var(--ie-nav-h) + 20px) 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transform: translateX(100%);
+  transition: transform var(--ie-dur-med) var(--ie-ease);
+}
+.ie-mobile-menu.is-open { transform: translateX(0); }
+.ie-mobile-menu a {
+  font-family: var(--ie-font-display);
+  font-size: 1.6rem;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--ie-line);
+}
+.ie-mobile-menu__actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+
+/* ---- Small tablets (>= 600px) ---- */
+@media (min-width: 600px) {
+  .ie-feature-grid { grid-template-columns: repeat(2, 1fr); }
+  .ie-stats-grid { grid-template-columns: repeat(4, 1fr); }
+  .ie-stat { border-bottom: none; padding-bottom: 20px; }
+  .ie-stat:nth-child(2) { border-right: 1px solid var(--ie-line); }
+}
+
+/* ---- Tablets / small laptops (>= 860px) ---- */
+@media (min-width: 860px) {
+  .ie-quick-grid { grid-template-columns: repeat(2, 1fr); }
+  .ie-membership-banner { flex-direction: row; align-items: center; }
+  .ie-membership-banner__badge { position: absolute; margin-bottom: 0; }
+}
+
+/* ---- Desktop (>= 1024px) ---- */
+@media (min-width: 1024px) {
+  .ie-nav-burger { display: none; }
+  .ie-nav-links { display: flex; }
+  .ie-lang-select { display: inline-flex; }
+  .ie-mobile-menu { display: none !important; }
+
+  .ie-dash-grid { grid-template-columns: 1.1fr 0.9fr; }
+  .ie-goal-metrics { grid-template-columns: repeat(3, 1fr); }
+  .ie-quick-grid { grid-template-columns: repeat(3, 1fr); }
+  .ie-feature-grid { grid-template-columns: repeat(4, 1fr); }
+  .ie-footer-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr 1.2fr; }
+  .ie-footer-brand { grid-column: auto; }
+}
+
+/* ---- Large desktop (>= 1440px) ---- */
+@media (min-width: 1440px) {
+  .ie-container { padding-inline: 40px; }
+}
+
+/* ---- Fine pointer only: richer hovers ---- */
+@media (hover: hover) and (pointer: fine) {
+  .ie-card, .ie-quick-card, .ie-trainer-card { will-change: transform; }
+}
+
+/* ---- Short / landscape mobile ---- */
+@media (max-height: 560px) and (orientation: landscape) {
+  #ie-hero { min-height: 140vh; }
+}

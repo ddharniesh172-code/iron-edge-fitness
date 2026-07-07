@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workouts | IRON EDGE FITNESS</title>
+<meta name="description" content="Browse, filter and start workouts across every body part with IRON EDGE FITNESS.">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<!-- Project CSS -->
+<link rel="stylesheet" href="../css/workout.css">
+</head>
+<body class="ie-body">
+
+<!-- ================= NAVBAR ================= -->
+<header class="ie-navbar">
+  <div class="ie-navbar-inner">
+    <a href="../index.html" class="ie-logo">IRON<span>EDGE</span></a>
+
+    <nav class="ie-nav-links">
+      <a href="../index.html">Home</a>
+      <a href="workout.html" class="active">Workouts</a>
+      <a href="body-parts.html">Body Parts</a>
+      <a href="diet.html">Diet</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="community.html">Community</a>
+    </nav>
+
+    <div class="ie-nav-actions">
+      <button class="ie-icon-btn" id="favToggleNav" title="Favorites">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+      <a href="dashboard.html" class="ie-icon-btn" title="Dashboard">
+        <i class="fa-solid fa-user"></i>
+      </a>
+      <button class="ie-hamburger" id="hamburgerBtn">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="ie-workout-hero">
+  <div class="ie-hero-glow"></div>
+  <div class="ie-hero-content">
+    <p class="ie-eyebrow">TRAIN WITH PRECISION</p>
+    <h1>Find Your Next <span>Workout</span></h1>
+    <p class="ie-hero-sub">Search hundreds of exercises, filter by body part &amp; difficulty, and track every rep of your progress.</p>
+
+    <!-- Search + Filters -->
+    <div class="ie-search-panel glass-card">
+      <div class="ie-search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="exerciseSearch" placeholder="Search exercises e.g. Bench Press, Squats, Plank...">
+        <button id="clearSearchBtn" class="ie-clear-btn" title="Clear"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="ie-filters-row">
+        <div class="ie-filter-group">
+          <label>Body Part</label>
+          <select id="bodyPartFilter">
+            <option value="all">All Body Parts</option>
+            <option value="chest">Chest</option>
+            <option value="back">Back</option>
+            <option value="shoulders">Shoulders</option>
+            <option value="biceps">Biceps</option>
+            <option value="triceps">Triceps</option>
+            <option value="forearms">Forearms</option>
+            <option value="legs">Legs</option>
+            <option value="calves">Calves</option>
+            <option value="glutes">Glutes</option>
+            <option value="abs">Abs</option>
+            <option value="cardio">Cardio</option>
+            <option value="full-body">Full Body</option>
+          </select>
+        </div>
+
+        <div class="ie-filter-group">
+          <label>Difficulty</label>
+          <select id="difficultyFilter">
+            <option value="all">All Levels</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+          </select>
+        </div>
+
+        <div class="ie-filter-group">
+          <label>Equipment</label>
+          <select id="equipmentFilter">
+            <option value="all">All Equipment</option>
+            <option value="Bodyweight">Bodyweight</option>
+            <option value="Dumbbell">Dumbbell</option>
+            <option value="Barbell">Barbell</option>
+            <option value="Machine">Machine</option>
+            <option value="Cable">Cable</option>
+            <option value="Kettlebell">Kettlebell</option>
+            <option value="Resistance Band">Resistance Band</option>
+          </select>
+        </div>
+
+        <button id="resetFiltersBtn" class="ie-reset-btn">
+          <i class="fa-solid fa-arrows-rotate"></i> Reset
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUICK BODY PART CHIPS ================= -->
+<section class="ie-section ie-chips-section">
+  <div class="ie-chips-scroll" id="bodyPartChips">
+    <!-- injected by JS -->
+  </div>
+</section>
+
+<!-- ================= RECENTLY VIEWED ================= -->
+<section class="ie-section" id="recentlyViewedSection" style="display:none;">
+  <div class="ie-section-head">
+    <h2><i class="fa-solid fa-clock-rotate-left"></i> Recently Viewed</h2>
+    <button class="ie-link-btn" id="clearRecentBtn">Clear</button>
+  </div>
+  <div class="ie-card-grid" id="recentlyViewedGrid"></div>
+</section>
+
+<!-- ================= FAVORITES ================= -->
+<section class="ie-section" id="favoritesSection" style="display:none;">
+  <div class="ie-section-head">
+    <h2><i class="fa-solid fa-heart"></i> Your Favorites</h2>
+    <span class="ie-count-badge" id="favCount">0</span>
+  </div>
+  <div class="ie-card-grid" id="favoritesGrid"></div>
+</section>
+
+<!-- ================= ALL EXERCISES ================= -->
+<section class="ie-section">
+  <div class="ie-section-head">
+    <h2><i class="fa-solid fa-dumbbell"></i> All Exercises</h2>
+    <span class="ie-result-count"><span id="resultCount">0</span> results</span>
+  </div>
+
+  <div class="ie-card-grid" id="exerciseGrid">
+    <!-- injected by JS -->
+  </div>
+
+  <div id="noResults" class="ie-no-results" style="display:none;">
+    <i class="fa-solid fa-magnifying-glass-minus"></i>
+    <p>No exercises match your search or filters.</p>
+    <button id="noResultsResetBtn" class="ie-btn-outline">Reset Filters</button>
+  </div>
+
+  <div class="ie-loadmore-wrap">
+    <button id="loadMoreBtn" class="ie-btn-outline">Load More</button>
+  </div>
+</section>
+
+<!-- ================= PROGRESS HISTORY ================= -->
+<section class="ie-section">
+  <div class="ie-section-head">
+    <h2><i class="fa-solid fa-chart-line"></i> Your Progress History</h2>
+  </div>
+  <div class="ie-progress-wrap glass-card">
+    <div class="ie-progress-stats">
+      <div class="ie-stat-box">
+        <span class="ie-stat-num" id="statTotalWorkouts">0</span>
+        <span class="ie-stat-label">Workouts Completed</span>
+      </div>
+      <div class="ie-stat-box">
+        <span class="ie-stat-num" id="statTotalCalories">0</span>
+        <span class="ie-stat-label">Calories Burned</span>
+      </div>
+      <div class="ie-stat-box">
+        <span class="ie-stat-num" id="statStreak">0</span>
+        <span class="ie-stat-label">Day Streak</span>
+      </div>
+      <div class="ie-stat-box">
+        <span class="ie-stat-num" id="statTotalMinutes">0</span>
+        <span class="ie-stat-label">Minutes Trained</span>
+      </div>
+    </div>
+    <canvas id="progressChart" height="90"></canvas>
+    <div id="historyList" class="ie-history-list"></div>
+  </div>
+</section>
+
+<!-- ================= ACTIVE WORKOUT TIMER (floating) ================= -->
+<div id="workoutTimerBar" class="ie-timer-bar" style="display:none;">
+  <div class="ie-timer-info">
+    <i class="fa-solid fa-stopwatch"></i>
+    <div>
+      <p class="ie-timer-exercise" id="timerExerciseName">Exercise Name</p>
+      <p class="ie-timer-sub" id="timerPhaseLabel">Get Ready</p>
+    </div>
+  </div>
+  <div class="ie-timer-clock" id="timerClock">00:00</div>
+  <div class="ie-timer-actions">
+    <button id="timerPauseBtn" class="ie-icon-btn"><i class="fa-solid fa-pause"></i></button>
+    <button id="timerSkipBtn" class="ie-icon-btn"><i class="fa-solid fa-forward-step"></i></button>
+    <button id="timerFinishBtn" class="ie-btn-primary-sm">Finish Workout</button>
+    <button id="timerCloseBtn" class="ie-icon-btn"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+</div>
+
+<!-- ================= WORKOUT COMPLETE MODAL ================= -->
+<div id="completeModal" class="ie-modal-overlay" style="display:none;">
+  <div class="ie-modal glass-card">
+    <div class="ie-modal-icon"><i class="fa-solid fa-trophy"></i></div>
+    <h3>Workout Complete!</h3>
+    <p id="completeSummary">You crushed it. Great work today.</p>
+    <div class="ie-modal-stats">
+      <div><span id="completeCalories">0</span><small>Calories</small></div>
+      <div><span id="completeDuration">0</span><small>Minutes</small></div>
+    </div>
+    <button class="ie-btn-primary" id="completeCloseBtn">Awesome, Done</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="ie-toast"></div>
+
+<!-- ================= FOOTER ================= -->
+<footer class="ie-footer">
+  <p>&copy; 2026 IRON EDGE FITNESS. All rights reserved.</p>
+</footer>
+
+<!-- Scripts -->
+<script src="../js/firebase-config.js"></script>
+<script src="../firebase/workout.js"></script>
+<script src="../js/exercise-data.js"></script>
+<script src="../js/workout.js"></script>
+</body>
+</html>

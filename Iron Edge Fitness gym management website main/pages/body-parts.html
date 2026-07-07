@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Body Parts | IRON EDGE FITNESS</title>
+<meta name="description" content="Explore exercises by body part - Chest, Back, Shoulders, Arms, Legs, Abs, Cardio and more.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<link rel="stylesheet" href="../css/workout.css">
+</head>
+<body class="ie-body">
+
+<!-- ================= NAVBAR ================= -->
+<header class="ie-navbar">
+  <div class="ie-navbar-inner">
+    <a href="../index.html" class="ie-logo">IRON<span>EDGE</span></a>
+    <nav class="ie-nav-links">
+      <a href="../index.html">Home</a>
+      <a href="workout.html">Workouts</a>
+      <a href="body-parts.html" class="active">Body Parts</a>
+      <a href="diet.html">Diet</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="community.html">Community</a>
+    </nav>
+    <div class="ie-nav-actions">
+      <button class="ie-icon-btn" id="favToggleNav" title="Favorites"><i class="fa-solid fa-heart"></i></button>
+      <a href="dashboard.html" class="ie-icon-btn" title="Dashboard"><i class="fa-solid fa-user"></i></a>
+      <button class="ie-hamburger" id="hamburgerBtn"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="ie-bodyparts-hero">
+  <div class="ie-hero-glow"></div>
+  <div class="ie-hero-content">
+    <p class="ie-eyebrow">TARGET YOUR TRAINING</p>
+    <h1>Browse By <span>Body Part</span></h1>
+    <p class="ie-hero-sub">Pick a muscle group to see every exercise built for it — beginner to advanced.</p>
+
+    <div class="ie-search-bar ie-search-bar--sm glass-card">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="bodyPartSearch" placeholder="Search a body part e.g. Chest, Legs, Cardio...">
+    </div>
+  </div>
+</section>
+
+<!-- ================= BODY PART GRID ================= -->
+<section class="ie-section">
+  <div class="ie-bodypart-grid" id="bodyPartGrid">
+    <!-- Cards injected by JS, static fallback below for no-JS -->
+    <a href="workout.html?bodypart=chest" class="ie-bp-card glass-card" data-bp="chest">
+      <div class="ie-bp-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+      <h3>Chest</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+    <a href="workout.html?bodypart=back" class="ie-bp-card glass-card" data-bp="back">
+      <div class="ie-bp-icon"><i class="fa-solid fa-person"></i></div>
+      <h3>Back</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+    <a href="workout.html?bodypart=shoulders" class="ie-bp-card glass-card" data-bp="shoulders">
+      <div class="ie-bp-icon"><i class="fa-solid fa-dumbbell"></i></div>
+      <h3>Shoulders</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+    <a href="workout.html?bodypart=biceps" class="ie-bp-card glass-card" data-bp="biceps">
+      <div class="ie-bp-icon"><i class="fa-solid fa-hand-fist"></i></div>
+      <h3>Biceps</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+    <a href="workout.html?bodypart=triceps" class="ie-bp-card glass-card" data-bp="triceps">
+      <div class="ie-bp-icon"><i class="fa-solid fa-hand-back-fist"></i></div>
+      <h3>Triceps</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+    <a href="workout.html?bodypart=forearms" class="ie-bp-card glass-card" data-bp="forearms">
+      <div class="ie-bp-icon"><i class="fa-solid fa-hand"></i></div>
+      <h3>Forearms</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+    <a href="workout.html?bodypart=legs" class="ie-bp-card glass-card" data-bp="legs">
+      <div class="ie-bp-icon"><i class="fa-solid fa-person-walking"></i></div>
+      <h3>Legs</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+    <a href="workout.html?bodypart=calves" class="ie-bp-card glass-card" data-bp="calves">
+      <div class="ie-bp-icon"><i class="fa-solid fa-shoe-prints"></i></div>
+      <h3>Calves</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+    <a href="workout.html?bodypart=glutes" class="ie-bp-card glass-card" data-bp="glutes">
+      <div class="ie-bp-icon"><i class="fa-solid fa-circle-dot"></i></div>
+      <h3>Glutes</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+    <a href="workout.html?bodypart=abs" class="ie-bp-card glass-card" data-bp="abs">
+      <div class="ie-bp-icon"><i class="fa-solid fa-align-center"></i></div>
+      <h3>Abs</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+    <a href="workout.html?bodypart=cardio" class="ie-bp-card glass-card" data-bp="cardio">
+      <div class="ie-bp-icon"><i class="fa-solid fa-heart-circle-bolt"></i></div>
+      <h3>Cardio</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+    <a href="workout.html?bodypart=full-body" class="ie-bp-card glass-card" data-bp="full-body">
+      <div class="ie-bp-icon"><i class="fa-solid fa-fire"></i></div>
+      <h3>Full Body</h3>
+      <p class="ie-bp-count"><span class="count">--</span> exercises</p>
+    </a>
+  </div>
+
+  <div id="bodyPartNoResults" class="ie-no-results" style="display:none;">
+    <i class="fa-solid fa-magnifying-glass-minus"></i>
+    <p>No body part matches your search.</p>
+  </div>
+</section>
+
+<!-- ================= WHY TRAIN BY BODY PART ================= -->
+<section class="ie-section ie-info-section">
+  <div class="ie-info-grid">
+    <div class="ie-info-card glass-card">
+      <i class="fa-solid fa-bullseye"></i>
+      <h4>Targeted Growth</h4>
+      <p>Focus volume on the muscles that need it most for balanced, symmetric development.</p>
+    </div>
+    <div class="ie-info-card glass-card">
+      <i class="fa-solid fa-layer-group"></i>
+      <h4>Split Friendly</h4>
+      <p>Perfect for Push/Pull/Legs, Bro Splits, or Upper/Lower training routines.</p>
+    </div>
+    <div class="ie-info-card glass-card">
+      <i class="fa-solid fa-chart-simple"></i>
+      <h4>Track Everything</h4>
+      <p>See exactly how many exercises exist for every muscle group, updated live.</p>
+    </div>
+  </div>
+</section>
+
+<div id="toast" class="ie-toast"></div>
+
+<footer class="ie-footer">
+  <p>&copy; 2026 IRON EDGE FITNESS. All rights reserved.</p>
+</footer>
+
+<script src="../js/firebase-config.js"></script>
+<script src="../firebase/workout.js"></script>
+<script src="../js/exercise-data.js"></script>
+<script>
+  // ---- Body Parts page specific logic ----
+  document.addEventListener('DOMContentLoaded', () => {
+    const grid = document.getElementById('bodyPartGrid');
+    const cards = Array.from(document.querySelectorAll('.ie-bp-card'));
+    const searchInput = document.getElementById('bodyPartSearch');
+    const noResults = document.getElementById('bodyPartNoResults');
+
+    // Populate counts from exercise-data.js (EXERCISE_DATA global)
+    if (typeof EXERCISE_DATA !== 'undefined') {
+      cards.forEach(card => {
+        const bp = card.dataset.bp;
+        const count = EXERCISE_DATA.filter(ex => ex.bodyPart === bp).length;
+        const countEl = card.querySelector('.count');
+        if (countEl) countEl.textContent = count;
+      });
+    }
+
+    // GSAP stagger entrance
+    if (typeof gsap !== 'undefined') {
+      gsap.from(cards, {
+        opacity: 0,
+        y: 30,
+        duration: 0.6,
+        stagger: 0.06,
+        ease: 'power2.out'
+      });
+    }
+
+    // Live search filter
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      let visibleCount = 0;
+      cards.forEach(card => {
+        const name = card.querySelector('h3').textContent.toLowerCase();
+        const match = name.includes(q);
+        card.style.display = match ? '' : 'none';
+        if (match) visibleCount++;
+      });
+      noResults.style.display = visibleCount === 0 ? 'flex' : 'none';
+    });
+
+    // Hover tilt micro-interaction
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        card.style.transform = `rotateX(${(-y / 18)}deg) rotateY(${(x / 18)}deg) translateY(-6px)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+      });
+    });
+  });
+</script>
+</body>
+</html>

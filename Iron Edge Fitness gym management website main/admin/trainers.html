@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trainer Management — Iron Edge Fitness Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body data-admin-page="trainers">
+
+  <div class="ie-admin-shell">
+    <div id="ie-sidebar-slot"></div>
+
+    <main class="ie-admin-main">
+      <div class="ie-admin-topbar">
+        <div>
+          <h1>Trainer Management</h1>
+          <p>Add, edit, or remove the coaches shown across the site.</p>
+        </div>
+        <div class="ie-admin-topbar-actions">
+          <button type="button" class="ie-btn ie-btn-primary ie-btn-sm" id="ie-add-trainer-btn"><i class="fa-solid fa-plus"></i> Add Trainer</button>
+        </div>
+      </div>
+
+      <div class="ie-admin-card">
+        <div class="ie-admin-table-wrap">
+          <table class="ie-admin-table">
+            <thead>
+              <tr><th>Trainer</th><th>Specialty</th><th>Experience</th><th>Rating</th><th>Clients</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="ie-trainers-table-body">
+              <tr class="ie-admin-empty-row"><td colspan="6">No trainers yet — click "Add Trainer" to create one.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p style="font-size:0.78rem; color:var(--ie-ash); margin-top:4px;">
+        Note: the public homepage and <code>pages/trainers.html</code> currently show a static, hand-written trainer
+        lineup from Prompt 1 — connecting them to read live from this <code>trainers</code> collection is a
+        follow-up change to those files.
+      </p>
+    </main>
+  </div>
+
+  <!-- ============================== TRAINER MODAL ============================== -->
+  <div class="ie-admin-modal" id="ie-trainer-modal">
+    <div class="ie-glass ie-admin-modal-panel">
+      <button type="button" class="ie-icon-btn ie-admin-modal-close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <h2 id="ie-trainer-modal-title">Add Trainer</h2>
+      <div class="ie-form-banner" data-form-banner role="alert"></div>
+      <form id="ie-trainer-form" novalidate>
+        <input type="hidden" id="ie-trainer-original-id">
+        <div class="ie-field">
+          <label for="ie-trainer-id">Trainer ID (slug)</label>
+          <input type="text" id="ie-trainer-id" required>
+        </div>
+        <div class="ie-field">
+          <label for="ie-trainer-name">Name</label>
+          <input type="text" id="ie-trainer-name" required>
+        </div>
+        <div class="ie-field">
+          <label for="ie-trainer-role">Specialty</label>
+          <input type="text" id="ie-trainer-role" placeholder="e.g. Strength &amp; Powerlifting" required>
+        </div>
+        <div class="ie-field-row ie-field-row--2">
+          <div class="ie-field">
+            <label for="ie-trainer-experience">Years Experience</label>
+            <input type="number" id="ie-trainer-experience" min="0" value="1">
+          </div>
+          <div class="ie-field">
+            <label for="ie-trainer-rating">Rating (0–5)</label>
+            <input type="number" id="ie-trainer-rating" min="0" max="5" step="0.1" value="4.8">
+          </div>
+        </div>
+        <div class="ie-field">
+          <label for="ie-trainer-clients">Clients Coached</label>
+          <input type="number" id="ie-trainer-clients" min="0" value="0">
+        </div>
+        <div class="ie-field">
+          <label for="ie-trainer-image">Photo URL</label>
+          <input type="text" id="ie-trainer-image" placeholder="https://…">
+        </div>
+        <div class="ie-field">
+          <label for="ie-trainer-bio">Short Bio</label>
+          <textarea id="ie-trainer-bio" rows="3"></textarea>
+        </div>
+        <button type="submit" class="ie-btn ie-btn-primary" data-submit-btn style="width:100%;">
+          <span class="ie-btn-label"><i class="fa-solid fa-floppy-disk"></i> Save Trainer</span>
+          <span class="ie-btn-spinner"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="ie-toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="ie-toast-text">Updated</span>
+  </div>
+
+  <script src="../js/admin.js" type="module"></script>
+
+  <script type="module">
+    import { getAdminTrainers, addTrainer, updateTrainer, deleteTrainer } from '../firebase/admin.js';
+
+    const $ = (s, ctx = document) => ctx.querySelector(s);
+    const $$ = (s, ctx = document) => Array.from(ctx.querySelectorAll(s));
+
+    let trainers = [];
+
+    async function renderTrainers() {
+      trainers = await getAdminTrainers();
+      const body = $('#ie-trainers-table-body');
+      if (!trainers.length) {
+        body.innerHTML = `<tr class="ie-admin-empty-row"><td colspan="6">No trainers yet — click "Add Trainer" to create one.</td></tr>`;
+        return;
+      }
+      body.innerHTML = trainers
+        .map((t) => `
+        <tr>
+          <td><span class="ie-table-avatar">${(t.name || '?')[0]?.toUpperCase()}</span>${t.name}</td>
+          <td>${t.role || '—'}</td>
+          <td>${t.experience || 0} yrs</td>
+          <td>${t.rating ?? '—'} <i class="fa-solid fa-star" style="color:var(--ie-orange-400); font-size:0.7rem;"></i></td>
+          <td>${t.clients ?? 0}</td>
+          <td>
+            <div class="ie-table-actions">
+              <button type="button" class="ie-table-action-btn" data-edit-trainer="${t.id}" aria-label="Edit"><i class="fa-solid fa-pen"></i></button>
+              <button type="button" class="ie-table-action-btn" data-delete-trainer="${t.id}" aria-label="Delete"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>`)
+        .join('');
+
+      $$('[data-edit-trainer]', body).forEach((btn) => btn.addEventListener('click', () => openTrainerModal(trainers.find((t) => t.id === btn.dataset.editTrainer))));
+      $$('[data-delete-trainer]', body).forEach((btn) =>
+        btn.addEventListener('click', async () => {
+          if (!confirm('Remove this trainer?')) return;
+          await deleteTrainer(btn.dataset.deleteTrainer);
+          window.IEAdmin.toast('Trainer removed');
+          await renderTrainers();
+        })
+      );
+    }
+
+    function openTrainerModal(trainer) {
+      $('#ie-trainer-modal-title').textContent = trainer ? 'Edit Trainer' : 'Add Trainer';
+      $('#ie-trainer-original-id').value = trainer?.id || '';
+      $('#ie-trainer-id').value = trainer?.id || '';
+      $('#ie-trainer-id').disabled = !!trainer;
+      $('#ie-trainer-name').value = trainer?.name || '';
+      $('#ie-trainer-role').value = trainer?.role || '';
+      $('#ie-trainer-experience').value = trainer?.experience || 1;
+      $('#ie-trainer-rating').value = trainer?.rating || 4.8;
+      $('#ie-trainer-clients').value = trainer?.clients || 0;
+      $('#ie-trainer-image').value = trainer?.image || '';
+      $('#ie-trainer-bio').value = trainer?.bio || '';
+      window.IEAdmin.openModal('ie-trainer-modal');
+    }
+
+    $('#ie-add-trainer-btn').addEventListener('click', () => openTrainerModal(null));
+
+    $('#ie-trainer-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const originalId = $('#ie-trainer-original-id').value;
+      const id = $('#ie-trainer-id').value.trim().toLowerCase().replace(/\s+/g, '-');
+      const data = {
+        name: $('#ie-trainer-name').value.trim(),
+        role: $('#ie-trainer-role').value.trim(),
+        experience: parseInt($('#ie-trainer-experience').value, 10) || 0,
+        rating: parseFloat($('#ie-trainer-rating').value) || 0,
+        clients: parseInt($('#ie-trainer-clients').value, 10) || 0,
+        image: $('#ie-trainer-image').value.trim(),
+        bio: $('#ie-trainer-bio').value.trim(),
+      };
+      if (originalId) await updateTrainer(originalId, data);
+      else await addTrainer(id, data);
+
+      window.IEAdmin.closeModal('ie-trainer-modal');
+      window.IEAdmin.toast('Trainer saved');
+      await renderTrainers();
+    });
+
+    (async () => {
+      const session = await window.IEAdmin.requireAdmin();
+      if (!session) return;
+      await renderTrainers();
+    })();
+  </script>
+</body>
+</html>

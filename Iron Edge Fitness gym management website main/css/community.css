@@ -1,0 +1,498 @@
+/* ============================================================
+   IRON EDGE FITNESS — community.css
+   Community Feed, Trainer Booking & Notifications Module
+   Extends variables and .glass-card from workout.css — load
+   workout.css (and diet.css / dashboard.css) BEFORE this file.
+   ============================================================ */
+
+/* ============================================================
+   AVATARS (shared)
+   ============================================================ */
+.ie-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ie-orange), #ff8a3d);
+  display: grid;
+  place-items: center;
+  color: #000;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.ie-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.ie-avatar-sm { width: 38px; height: 38px; font-size: 1rem; }
+.ie-avatar-lg { width: 76px; height: 76px; font-size: 1.8rem; }
+
+/* ============================================================
+   NOTIFICATION BELL + PANEL
+   ============================================================ */
+.ie-notif-bell { position: relative; }
+.ie-notif-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ie-danger);
+  border: 2px solid var(--ie-black);
+}
+
+.ie-notif-panel {
+  position: fixed;
+  top: 72px;
+  right: 20px;
+  width: 360px;
+  max-width: 92vw;
+  max-height: 70vh;
+  background: rgba(10,10,12,0.96);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--ie-border);
+  border-radius: var(--ie-radius);
+  box-shadow: var(--ie-shadow);
+  z-index: 250;
+  display: flex;
+  flex-direction: column;
+  animation: ie-fade-up 0.25s ease;
+}
+.ie-notif-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--ie-border);
+}
+.ie-notif-panel-head h3 { font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.ie-notif-panel-head h3 i { color: var(--ie-orange); }
+
+.ie-notif-list { overflow-y: auto; padding: 8px; }
+.ie-notif-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--ie-radius-sm);
+  cursor: pointer;
+  transition: background var(--ie-transition);
+}
+.ie-notif-item:hover { background: rgba(255,255,255,0.04); }
+.ie-notif-item.unread { background: rgba(255,106,0,0.06); }
+.ie-notif-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255,106,0,0.14);
+  color: var(--ie-orange);
+  flex-shrink: 0;
+  font-size: 0.95rem;
+}
+.ie-notif-body { flex: 1; }
+.ie-notif-title { font-size: 0.85rem; font-weight: 600; }
+.ie-notif-desc { font-size: 0.78rem; color: var(--ie-gray); margin-top: 2px; }
+.ie-notif-time { font-size: 0.7rem; color: var(--ie-gray-dim); margin-top: 4px; }
+.ie-notif-empty { padding: 40px 20px; text-align: center; color: var(--ie-gray); font-size: 0.85rem; }
+
+/* ============================================================
+   COMMUNITY LAYOUT
+   ============================================================ */
+.ie-community-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.ie-community-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: sticky;
+  top: 90px;
+}
+
+.ie-profile-card {
+  padding: 24px 20px;
+  text-align: center;
+}
+.ie-profile-card .ie-avatar { margin: 0 auto 12px; }
+.ie-profile-card h3 { font-size: 1.05rem; }
+.ie-profile-handle { color: var(--ie-gray); font-size: 0.82rem; margin: 2px 0 14px; }
+
+.ie-profile-stats {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid var(--ie-border);
+  padding-top: 14px;
+}
+.ie-profile-stats div { display: flex; flex-direction: column; }
+.ie-profile-stats span { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--ie-orange); }
+.ie-profile-stats small { color: var(--ie-gray); font-size: 0.7rem; }
+
+.ie-sidebar-card { padding: 18px 20px; }
+.ie-sidebar-card h4 {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.ie-sidebar-card h4 i { color: var(--ie-orange); }
+
+.ie-tag-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.ie-tag-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255,106,0,0.08);
+  border: 1px solid rgba(255,106,0,0.25);
+  color: var(--ie-orange-light);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all var(--ie-transition);
+}
+.ie-tag-pill:hover { background: var(--ie-orange); color: #000; }
+
+.ie-suggested-list { display: flex; flex-direction: column; gap: 12px; }
+.ie-suggested-item { display: flex; align-items: center; gap: 10px; }
+.ie-suggested-item .ie-avatar { width: 36px; height: 36px; font-size: 0.9rem; }
+.ie-suggested-info { flex: 1; min-width: 0; }
+.ie-suggested-name { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ie-suggested-handle { font-size: 0.72rem; color: var(--ie-gray-dim); }
+.ie-follow-btn-sm {
+  background: var(--ie-black-card);
+  border: 1px solid var(--ie-border);
+  color: var(--ie-orange);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--ie-transition);
+}
+.ie-follow-btn-sm:hover { background: var(--ie-orange); color: #000; }
+.ie-follow-btn-sm.following { color: var(--ie-gray); }
+
+/* ============================================================
+   CREATE POST
+   ============================================================ */
+.ie-create-post { padding: 20px; margin-bottom: 20px; }
+.ie-create-post-top { display: flex; gap: 14px; }
+.ie-create-post-top textarea {
+  flex: 1;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--ie-border);
+  border-radius: var(--ie-radius-sm);
+  color: var(--ie-white);
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+  outline: none;
+}
+.ie-create-post-top textarea:focus { border-color: var(--ie-orange); }
+
+.ie-image-preview-row {
+  margin-top: 12px;
+  position: relative;
+  display: inline-block;
+}
+.ie-image-preview-row img { max-height: 200px; border-radius: var(--ie-radius-sm); display: block; }
+.ie-image-preview-row .ie-modal-close { position: absolute !important; top: 8px; right: 8px; }
+
+.ie-create-post-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+.ie-upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ie-gray);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: var(--ie-radius-sm);
+  border: 1px solid var(--ie-border);
+  transition: all var(--ie-transition);
+}
+.ie-upload-btn:hover { border-color: var(--ie-orange); color: var(--ie-orange); }
+
+.ie-feed-tabs { display: flex; gap: 10px; margin-bottom: 18px; }
+
+/* ============================================================
+   FEED / POST CARDS
+   ============================================================ */
+.ie-feed-list { display: flex; flex-direction: column; gap: 18px; }
+
+.ie-post-card { padding: 20px; }
+.ie-post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.ie-post-author-info { flex: 1; cursor: pointer; }
+.ie-post-author-name { font-weight: 600; font-size: 0.92rem; }
+.ie-post-time { font-size: 0.72rem; color: var(--ie-gray-dim); }
+.ie-post-follow-btn {
+  background: none;
+  border: 1px solid var(--ie-border);
+  color: var(--ie-orange);
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--ie-transition);
+}
+.ie-post-follow-btn:hover { background: var(--ie-orange); color: #000; }
+.ie-post-follow-btn.following { color: var(--ie-gray); }
+
+.ie-post-text { font-size: 0.92rem; line-height: 1.6; margin-bottom: 14px; white-space: pre-wrap; }
+.ie-post-hashtag { color: var(--ie-orange-light); font-weight: 600; }
+
+.ie-post-image {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: var(--ie-radius-sm);
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+
+.ie-post-actions {
+  display: flex;
+  gap: 22px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ie-border);
+}
+.ie-post-action-btn {
+  background: none;
+  border: none;
+  color: var(--ie-gray);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: color var(--ie-transition);
+}
+.ie-post-action-btn:hover { color: var(--ie-orange); }
+.ie-post-action-btn.liked { color: var(--ie-orange); }
+.ie-post-action-btn.liked i { font-weight: 900; }
+
+/* ============================================================
+   COMMENTS
+   ============================================================ */
+.ie-comments-list {
+  max-height: 340px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 16px 0;
+}
+.ie-comment-item { display: flex; gap: 10px; }
+.ie-comment-item .ie-avatar { width: 34px; height: 34px; font-size: 0.85rem; }
+.ie-comment-bubble {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--ie-border);
+  border-radius: var(--ie-radius-sm);
+  padding: 10px 14px;
+  flex: 1;
+}
+.ie-comment-author { font-size: 0.82rem; font-weight: 600; }
+.ie-comment-text { font-size: 0.85rem; color: var(--ie-white); margin-top: 2px; }
+.ie-comment-time { font-size: 0.7rem; color: var(--ie-gray-dim); margin-top: 4px; }
+
+.ie-comment-input-row { display: flex; gap: 10px; }
+.ie-comment-input-row input {
+  flex: 1;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--ie-border);
+  color: var(--ie-white);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-family: inherit;
+  outline: none;
+}
+.ie-comment-input-row input:focus { border-color: var(--ie-orange); }
+
+/* ============================================================
+   SHARE MODAL
+   ============================================================ */
+.ie-share-link-row { display: flex; gap: 10px; }
+.ie-share-link-row input {
+  flex: 1;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--ie-border);
+  color: var(--ie-gray);
+  padding: 10px 14px;
+  border-radius: var(--ie-radius-sm);
+  font-family: inherit;
+  font-size: 0.82rem;
+}
+
+/* ============================================================
+   PROFILE MODAL
+   ============================================================ */
+.ie-profile-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.ie-profile-modal-head > div:nth-child(2) { flex: 1; }
+.ie-profile-modal-head h3 { font-size: 1.2rem; }
+
+/* ============================================================
+   TRAINER FILTERS + GRID
+   ============================================================ */
+.ie-trainer-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  padding: 22px;
+}
+
+.ie-trainer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px;
+}
+
+.ie-trainer-card { padding: 22px; text-align: center; cursor: pointer; }
+.ie-trainer-card .ie-avatar-lg { margin: 0 auto 14px; }
+.ie-trainer-name { font-size: 1.1rem; margin-bottom: 4px; }
+.ie-trainer-specialty { color: var(--ie-orange-light); font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; }
+
+.ie-trainer-rating { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 12px; }
+.ie-trainer-rating i { color: #ffc857; font-size: 0.85rem; }
+.ie-trainer-rating span { font-size: 0.8rem; color: var(--ie-gray); }
+
+.ie-trainer-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 14px; }
+.ie-trainer-mode-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(46,230,166,0.1);
+  color: var(--ie-success);
+  border: 1px solid rgba(46,230,166,0.3);
+  text-transform: uppercase;
+}
+.ie-trainer-mode-badge.offline { background: rgba(77,163,255,0.1); color: #4da3ff; border-color: rgba(77,163,255,0.3); }
+
+.ie-trainer-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--ie-orange); letter-spacing: 0.5px; }
+.ie-trainer-price small { font-family: 'Poppins', sans-serif; font-size: 0.7rem; color: var(--ie-gray); }
+
+/* ============================================================
+   TRAINER PROFILE MODAL
+   ============================================================ */
+.ie-trainer-profile-head { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
+.ie-trainer-profile-head h3 { font-size: 1.3rem; }
+
+.ie-trainer-meta-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+  font-size: 0.85rem;
+  color: var(--ie-gray);
+}
+.ie-trainer-meta-row i { color: var(--ie-orange); margin-right: 8px; }
+
+.ie-trainer-bio { color: var(--ie-gray); font-size: 0.88rem; line-height: 1.6; margin-bottom: 10px; }
+
+.ie-slots-day-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 14px 0;
+  padding-bottom: 4px;
+}
+
+.ie-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 10px;
+}
+.ie-slot-btn {
+  padding: 10px 6px;
+  border-radius: var(--ie-radius-sm);
+  background: var(--ie-black-card);
+  border: 1px solid var(--ie-border);
+  color: var(--ie-white);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all var(--ie-transition);
+}
+.ie-slot-btn:hover { border-color: var(--ie-orange); }
+.ie-slot-btn.selected { background: var(--ie-orange); color: #000; border-color: transparent; font-weight: 700; }
+.ie-slot-btn.booked { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+
+.ie-reviews-list { display: flex; flex-direction: column; gap: 14px; max-height: 260px; overflow-y: auto; }
+.ie-review-item {
+  padding: 12px 14px;
+  border-radius: var(--ie-radius-sm);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--ie-border);
+}
+.ie-review-head { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.ie-review-author { font-weight: 600; font-size: 0.85rem; }
+.ie-review-stars i { color: #ffc857; font-size: 0.75rem; }
+.ie-review-text { color: var(--ie-gray); font-size: 0.82rem; line-height: 1.5; }
+
+/* ============================================================
+   BOOKINGS LIST (upcoming + history)
+   ============================================================ */
+.ie-bookings-list { display: flex; flex-direction: column; gap: 14px; }
+.ie-booking-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+}
+.ie-booking-card .ie-avatar { flex-shrink: 0; }
+.ie-booking-info { flex: 1; }
+.ie-booking-trainer-name { font-weight: 600; font-size: 0.95rem; }
+.ie-booking-meta { font-size: 0.78rem; color: var(--ie-gray); margin-top: 3px; }
+.ie-booking-status {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+.ie-booking-status.confirmed { background: rgba(46,230,166,0.12); color: var(--ie-success); }
+.ie-booking-status.completed { background: rgba(77,163,255,0.12); color: #4da3ff; }
+.ie-booking-status.cancelled { background: rgba(255,77,77,0.12); color: var(--ie-danger); }
+.ie-cancel-booking-btn {
+  background: none;
+  border: 1px solid var(--ie-danger);
+  color: var(--ie-danger);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all var(--ie-transition);
+}
+.ie-cancel-booking-btn:hover { background: var(--ie-danger); color: #fff; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .ie-community-layout { grid-template-columns: 1fr; }
+  .ie-community-sidebar { position: static; flex-direction: row; overflow-x: auto; }
+  .ie-community-sidebar > * { min-width: 260px; }
+  .ie-trainer-meta-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .ie-notif-panel { right: 10px; left: 10px; width: auto; }
+  .ie-community-sidebar { flex-direction: column; }
+  .ie-community-sidebar > * { min-width: 0; }
+  .ie-booking-card { flex-wrap: wrap; }
+  .ie-trainer-filters { flex-direction: column; align-items: stretch; }
+}

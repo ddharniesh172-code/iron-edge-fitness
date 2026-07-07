@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Management — Iron Edge Fitness Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body data-admin-page="orders">
+
+  <div class="ie-admin-shell">
+    <div id="ie-sidebar-slot"></div>
+
+    <main class="ie-admin-main">
+      <div class="ie-admin-topbar">
+        <div>
+          <h1>Order Management</h1>
+          <p>Every shop order, its status, and fulfillment details.</p>
+        </div>
+        <div class="ie-admin-topbar-actions">
+          <button type="button" class="ie-btn ie-btn-ghost ie-btn-sm" id="ie-export-orders-btn">
+            <i class="fa-solid fa-file-arrow-down"></i> Export CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="ie-admin-card">
+        <div class="ie-admin-toolbar">
+          <div class="ie-admin-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="ie-order-search" placeholder="Search by invoice ID or customer…" autocomplete="off">
+          </div>
+          <select class="ie-admin-filter-select" id="ie-order-status-filter">
+            <option value="all">All Statuses</option>
+            <option value="placed">Placed</option>
+            <option value="paid">Paid</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="ie-admin-table-wrap">
+          <table class="ie-admin-table">
+            <thead>
+              <tr><th>Invoice</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="ie-orders-table-body">
+              <tr class="ie-admin-empty-row"><td colspan="7">Loading orders…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ============================== ORDER DETAILS MODAL ============================== -->
+  <div class="ie-admin-modal" id="ie-order-view-modal">
+    <div class="ie-glass ie-admin-modal-panel ie-admin-modal-panel--wide">
+      <button type="button" class="ie-icon-btn ie-admin-modal-close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <h2>Order Details</h2>
+      <div id="ie-order-view-body">Loading…</div>
+    </div>
+  </div>
+
+  <div id="ie-toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="ie-toast-text">Updated</span>
+  </div>
+
+  <script src="../js/admin.js" type="module"></script>
+
+  <script type="module">
+    import { getAllOrders, updateOrderStatus } from '../firebase/admin.js';
+
+    const $ = (s, ctx = document) => ctx.querySelector(s);
+    const $$ = (s, ctx = document) => Array.from(ctx.querySelectorAll(s));
+    const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n || 0);
+    const fmtDate = (ts) => (ts?.toDate ? ts.toDate().toLocaleString() : '—');
+
+    let allOrders = [];
+    let filters = { term: '', status: 'all' };
+
+    const statusTone = { placed: 'info', paid: 'success', shipped: 'brand', delivered: 'success', cancelled: 'danger' };
+
+    function applyFilters() {
+      return allOrders.filter((o) => {
+        const customerName = o.shippingAddress?.name || '';
+        const matchesTerm = !filters.term || o.invoiceId?.toLowerCase().includes(filters.term) || customerName.toLowerCase().includes(filters.term);
+        const matchesStatus = filters.status === 'all' || o.status === filters.status;
+        return matchesTerm && matchesStatus;
+      });
+    }
+
+    function renderTable() {
+      const rows = applyFilters();
+      const body = $('#ie-orders-table-body');
+      if (!rows.length) {
+        body.innerHTML = `<tr class="ie-admin-empty-row"><td colspan="7">No orders match your filters.</td></tr>`;
+        return;
+      }
+      body.innerHTML = rows
+        .map((o) => `
+        <tr>
+          <td>${o.invoiceId}</td>
+          <td>${o.shippingAddress?.name || '—'}</td>
+          <td>${o.items?.reduce((n, i) => n + (i.quantity || 0), 0) || 0}</td>
+          <td>${money(o.total)}</td>
+          <td>
+            <select class="ie-admin-filter-select" data-status-select="${o.id}" style="height:34px; font-size:0.76rem;">
+              ${['placed', 'paid', 'shipped', 'delivered', 'cancelled'].map((s) => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}
+            </select>
+          </td>
+          <td>${fmtDate(o.createdAt)}</td>
+          <td>
+            <div class="ie-table-actions">
+              <button type="button" class="ie-table-action-btn" data-view-order="${o.id}" aria-label="View"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </td>
+        </tr>`)
+        .join('');
+
+      $$('[data-status-select]', body).forEach((sel) =>
+        sel.addEventListener('change', async () => {
+          await updateOrderStatus(sel.dataset.statusSelect, sel.value);
+          window.IEAdmin.toast('Order status updated');
+          const order = allOrders.find((o) => o.id === sel.dataset.statusSelect);
+          if (order) order.status = sel.value;
+        })
+      );
+      $$('[data-view-order]', body).forEach((btn) => btn.addEventListener('click', () => openOrderModal(btn.dataset.viewOrder)));
+    }
+
+    function openOrderModal(orderId) {
+      const order = allOrders.find((o) => o.id === orderId);
+      if (!order) return;
+      const addr = order.shippingAddress || {};
+      $('#ie-order-view-body').innerHTML = `
+        <div class="ie-field-row ie-field-row--2" style="margin-bottom:20px;">
+          <div><p style="font-size:0.78rem; color:var(--ie-ash); text-transform:uppercase;">Invoice</p><p style="font-weight:700;">${order.invoiceId}</p></div>
+          <div><p style="font-size:0.78rem; color:var(--ie-ash); text-transform:uppercase;">Status</p><span class="ie-badge" data-tone="${statusTone[order.status] || 'neutral'}">${order.status}</span></div>
+        </div>
+        <div class="ie-field-row ie-field-row--2" style="margin-bottom:20px;">
+          <div>
+            <p style="font-size:0.78rem; color:var(--ie-ash); text-transform:uppercase;">Shipping To</p>
+            <p style="font-weight:700;">${addr.name || '—'}</p>
+            <p style="font-size:0.85rem; color:var(--ie-text-muted);">${addr.email || ''}</p>
+            <p style="font-size:0.85rem; color:var(--ie-text-muted);">${addr.address || ''}, ${addr.city || ''} ${addr.zip || ''}, ${addr.country || ''}</p>
+          </div>
+          <div>
+            <p style="font-size:0.78rem; color:var(--ie-ash); text-transform:uppercase;">Order Date</p>
+            <p style="font-weight:700;">${fmtDate(order.createdAt)}</p>
+          </div>
+        </div>
+        <h3 style="font-size:0.95rem; margin-bottom:10px;">Items</h3>
+        <div class="ie-admin-table-wrap">
+          <table class="ie-admin-table">
+            <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+            <tbody>
+              ${(order.items || []).map((i) => `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${money(i.price)}</td><td>${money(i.price * i.quantity)}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div style="text-align:right; margin-top:16px; font-size:0.95rem;">
+          <p style="color:var(--ie-text-muted);">Subtotal: ${money(order.subtotal)}</p>
+          <p style="color:var(--ie-text-muted);">Shipping: ${order.shipping ? money(order.shipping) : 'Free'}</p>
+          <p style="font-weight:700; font-family:var(--ie-font-display); font-size:1.3rem; color:var(--ie-orange-400); margin-top:6px;">Total: ${money(order.total)}</p>
+        </div>`;
+      window.IEAdmin.openModal('ie-order-view-modal');
+    }
+
+    $('#ie-order-search').addEventListener('input', (e) => { filters.term = e.target.value.toLowerCase(); renderTable(); });
+    $('#ie-order-status-filter').addEventListener('change', (e) => { filters.status = e.target.value; renderTable(); });
+
+    $('#ie-export-orders-btn').addEventListener('click', () => {
+      const rows = applyFilters().map((o) => ({
+        Invoice: o.invoiceId, Customer: o.shippingAddress?.name || '', Email: o.shippingAddress?.email || '',
+        Items: o.items?.reduce((n, i) => n + (i.quantity || 0), 0) || 0, Total: o.total, Status: o.status, Date: fmtDate(o.createdAt),
+      }));
+      window.IEAdmin.exportToCSV('iron-edge-orders', rows);
+    });
+
+    async function loadOrders() {
+      allOrders = await getAllOrders();
+      renderTable();
+    }
+
+    (async () => {
+      const session = await window.IEAdmin.requireAdmin();
+      if (!session) return;
+      await loadOrders();
+    })();
+  </script>
+</body>
+</html>

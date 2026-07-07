@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | IRON EDGE FITNESS</title>
+<meta name="description" content="Your personal fitness dashboard — progress, goals, achievements and AI-powered recommendations.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<link rel="stylesheet" href="../css/workout.css">
+<link rel="stylesheet" href="../css/diet.css">
+<link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body class="ie-body">
+
+<!-- ================= NAVBAR ================= -->
+<header class="ie-navbar">
+  <div class="ie-navbar-inner">
+    <a href="../index.html" class="ie-logo">IRON<span>EDGE</span></a>
+    <nav class="ie-nav-links">
+      <a href="../index.html">Home</a>
+      <a href="workout.html">Workouts</a>
+      <a href="diet-planner.html">Diet</a>
+      <a href="nutrition-calculator.html">Calculators</a>
+      <a href="dashboard.html" class="active">Dashboard</a>
+    </nav>
+    <div class="ie-nav-actions">
+      <button class="ie-icon-btn" id="refreshDashboardBtn" title="Refresh"><i class="fa-solid fa-arrows-rotate"></i></button>
+      <a href="../pages/login.html" class="ie-icon-btn" title="Account"><i class="fa-solid fa-user"></i></a>
+      <button class="ie-hamburger" id="hamburgerBtn"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= WELCOME + PROFILE SUMMARY ================= -->
+<section class="ie-section ie-dash-hero">
+  <div class="ie-welcome-card glass-card">
+    <div class="ie-welcome-left">
+      <div class="ie-avatar" id="profileAvatar">
+        <i class="fa-solid fa-user"></i>
+      </div>
+      <div>
+        <p class="ie-eyebrow">WELCOME BACK</p>
+        <h1 id="welcomeName">Athlete</h1>
+        <p class="ie-hero-sub" id="welcomeQuote" style="margin:0;">Every rep counts. Let's see where you stand today.</p>
+      </div>
+    </div>
+
+    <div class="ie-membership-badge" id="membershipBadge">
+      <i class="fa-solid fa-shield-heart"></i>
+      <div>
+        <span class="ie-membership-plan" id="membershipPlan">No Active Plan</span>
+        <span class="ie-membership-expiry" id="membershipExpiry">--</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ie-profile-stats-row">
+    <div class="ie-mini-stat glass-card">
+      <i class="fa-solid fa-weight-scale"></i>
+      <div><span id="miniBmi">--</span><small>BMI</small></div>
+    </div>
+    <div class="ie-mini-stat glass-card">
+      <i class="fa-solid fa-fire"></i>
+      <div><span id="miniBmr">--</span><small>BMR kcal</small></div>
+    </div>
+    <div class="ie-mini-stat glass-card">
+      <i class="fa-solid fa-fire-flame-curved"></i>
+      <div><span id="miniStreak">0</span><small>Day Streak</small></div>
+    </div>
+    <div class="ie-mini-stat glass-card">
+      <i class="fa-solid fa-trophy"></i>
+      <div><span id="miniBadgeCount">0</span><small>Badges Earned</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DAILY / WEEKLY / MONTHLY GOALS ================= -->
+<section class="ie-section">
+  <div class="ie-section-head">
+    <h2><i class="fa-solid fa-bullseye"></i> Your Goals</h2>
+  </div>
+  <div class="ie-goal-tabs" id="goalTabs">
+    <button class="ie-chip active" data-goal-tab="daily">Daily</button>
+    <button class="ie-chip" data-goal-tab="weekly">Weekly</button>
+    <button class="ie-chip" data-goal-tab="monthly">Monthly</button>
+  </div>
+
+  <div class="ie-goals-grid" id="goalsGrid-daily">
+    <div class="ie-goal-card glass-card">
+      <div class="ie-goal-ring-wrap"><canvas id="goalCaloriesRing" height="110"></canvas></div>
+      <span class="ie-goal-title">Calories</span>
+      <span class="ie-goal-sub" id="goalCaloriesText">0 / 0 kcal</span>
+    </div>
+    <div class="ie-goal-card glass-card">
+      <div class="ie-goal-ring-wrap"><canvas id="goalWaterRing" height="110"></canvas></div>
+      <span class="ie-goal-title">Water</span>
+      <span class="ie-goal-sub" id="goalWaterText">0 / 0 ml</span>
+    </div>
+    <div class="ie-goal-card glass-card">
+      <div class="ie-goal-ring-wrap"><canvas id="goalWorkoutRing" height="110"></canvas></div>
+      <span class="ie-goal-title">Workout</span>
+      <span class="ie-goal-sub" id="goalWorkoutText">0 / 1 session</span>
+    </div>
+    <div class="ie-goal-card glass-card">
+      <div class="ie-goal-ring-wrap"><canvas id="goalProteinRing" height="110"></canvas></div>
+      <span class="ie-goal-title">Protein</span>
+      <span class="ie-goal-sub" id="goalProteinText">0 / 0 g</span>
+    </div>
+  </div>
+
+  <div class="ie-goals-grid" id="goalsGrid-weekly" style="display:none;">
+    <div class="ie-goal-card glass-card">
+      <div class="ie-goal-ring-wrap"><canvas id="goalWeeklyWorkoutsRing" height="110"></canvas></div>
+      <span class="ie-goal-title">Workouts This Week</span>
+      <span class="ie-goal-sub" id="goalWeeklyWorkoutsText">0 / 5</span>
+    </div>
+    <div class="ie-goal-card glass-card">
+      <div class="ie-goal-ring-wrap"><canvas id="goalWeeklyCaloriesRing" height="110"></canvas></div>
+      <span class="ie-goal-title">Calories Burned</span>
+      <span class="ie-goal-sub" id="goalWeeklyCaloriesText">0 / 0 kcal</span>
+    </div>
+    <div class="ie-goal-card glass-card">
+      <div class="ie-goal-ring-wrap"><canvas id="goalWeeklyWaterRing" height="110"></canvas></div>
+      <span class="ie-goal-title">Water Days on Target</span>
+      <span class="ie-goal-sub" id="goalWeeklyWaterText">0 / 7</span>
+    </div>
+  </div>
+
+  <div class="ie-goals-grid" id="goalsGrid-monthly" style="display:none;">
+    <div class="ie-goal-card glass-card">
+      <div class="ie-goal-ring-wrap"><canvas id="goalMonthlyWorkoutsRing" height="110"></canvas></div>
+      <span class="ie-goal-title">Workouts This Month</span>
+      <span class="ie-goal-sub" id="goalMonthlyWorkoutsText">0 / 20</span>
+    </div>
+    <div class="ie-goal-card glass-card">
+      <div class="ie-goal-ring-wrap"><canvas id="goalMonthlyCaloriesRing" height="110"></canvas></div>
+      <span class="ie-goal-title">Calories Burned</span>
+      <span class="ie-goal-sub" id="goalMonthlyCaloriesText">0 / 0 kcal</span>
+    </div>
+    <div class="ie-goal-card glass-card">
+      <div class="ie-goal-ring-wrap"><canvas id="goalMonthlyWeightRing" height="110"></canvas></div>
+      <span class="ie-goal-title">Weight Goal Progress</span>
+      <span class="ie-goal-sub" id="goalMonthlyWeightText">No weight logged</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROGRESS CHARTS ================= -->
+<section class="ie-section">
+  <div class="ie-section-head">
+    <h2><i class="fa-solid fa-chart-line"></i> Progress Charts</h2>
+  </div>
+
+  <div class="ie-charts-grid">
+    <div class="ie-chart-card glass-card">
+      <h3><i class="fa-solid fa-weight-hanging"></i> Weight Progress</h3>
+      <canvas id="weightProgressChart" height="220"></canvas>
+      <div class="ie-weight-log-row">
+        <input type="number" id="weightLogInput" placeholder="Log today's weight (kg)" step="0.1">
+        <button class="ie-btn-primary-sm" id="logWeightBtn">Log</button>
+      </div>
+    </div>
+
+    <div class="ie-chart-card glass-card">
+      <h3><i class="fa-solid fa-fire-flame-curved"></i> Calories: Burned vs Consumed</h3>
+      <canvas id="caloriesChart" height="220"></canvas>
+    </div>
+
+    <div class="ie-chart-card glass-card">
+      <h3><i class="fa-solid fa-dumbbell"></i> Workout History</h3>
+      <canvas id="workoutHistoryChart" height="220"></canvas>
+    </div>
+
+    <div class="ie-chart-card glass-card">
+      <h3><i class="fa-solid fa-droplet"></i> Water Intake</h3>
+      <canvas id="waterHistoryChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="ie-chart-card glass-card ie-timeline-card">
+    <h3><i class="fa-solid fa-timeline"></i> Membership Timeline</h3>
+    <div class="ie-membership-timeline" id="membershipTimeline"></div>
+  </div>
+
+  <div class="ie-analytics-toggle-row">
+    <button class="ie-chip active" data-analytics-range="weekly">Weekly Analytics</button>
+    <button class="ie-chip" data-analytics-range="monthly">Monthly Analytics</button>
+  </div>
+  <div class="ie-chart-card glass-card">
+    <h3><i class="fa-solid fa-chart-column"></i> Training Volume</h3>
+    <canvas id="analyticsChart" height="200"></canvas>
+  </div>
+</section>
+
+<!-- ================= ACHIEVEMENT BADGES ================= -->
+<section class="ie-section">
+  <div class="ie-section-head">
+    <h2><i class="fa-solid fa-medal"></i> Achievement Badges</h2>
+    <span class="ie-result-count"><span id="badgeEarnedCount">0</span> / <span id="badgeTotalCount">0</span> earned</span>
+  </div>
+  <div class="ie-badges-grid" id="badgesGrid"></div>
+</section>
+
+<!-- ================= AI RECOMMENDATIONS ================= -->
+<section class="ie-section">
+  <div class="ie-section-head">
+    <h2><i class="fa-solid fa-wand-magic-sparkles"></i> AI Recommendations</h2>
+    <button class="ie-link-btn" id="refreshAiBtn"><i class="fa-solid fa-arrows-rotate"></i> Refresh Insights</button>
+  </div>
+
+  <div class="ie-ai-grid">
+    <div class="ie-ai-card glass-card">
+      <div class="ie-ai-card-head">
+        <i class="fa-solid fa-dumbbell"></i>
+        <h3>Workout Suggestion</h3>
+      </div>
+      <p id="aiWorkoutSuggestion">Loading personalized workout suggestion...</p>
+      <a href="workout.html" class="ie-link-btn" id="aiWorkoutLink">Go to Workouts <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+
+    <div class="ie-ai-card glass-card">
+      <div class="ie-ai-card-head">
+        <i class="fa-solid fa-bowl-food"></i>
+        <h3>Diet Recommendation</h3>
+      </div>
+      <p id="aiDietSuggestion">Loading personalized diet recommendation...</p>
+      <a href="diet-planner.html" class="ie-link-btn">Go to Diet Planner <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+
+    <div class="ie-ai-card glass-card">
+      <div class="ie-ai-card-head">
+        <i class="fa-solid fa-lightbulb"></i>
+        <h3>Daily Tip</h3>
+      </div>
+      <p id="aiDailyTip">Loading today's tip...</p>
+    </div>
+
+    <div class="ie-ai-card glass-card ie-ai-card-wide">
+      <div class="ie-ai-card-head">
+        <i class="fa-solid fa-chart-simple"></i>
+        <h3>Personalized Insight</h3>
+      </div>
+      <p id="aiPersonalizedInsight">Analyzing your recent activity...</p>
+    </div>
+  </div>
+</section>
+
+<div id="toast" class="ie-toast"></div>
+
+<footer class="ie-footer">
+  <p>&copy; 2026 IRON EDGE FITNESS. All rights reserved.</p>
+</footer>
+
+<script src="../js/firebase-config.js"></script>
+<script src="../firebase/workout.js"></script>
+<script src="../firebase/diet.js"></script>
+<script src="../firebase/dashboard.js"></script>
+<script src="../js/exercise-data.js"></script>
+<script src="../js/food-data.js"></script>
+<script src="../js/achievements-data.js"></script>
+<script src="../js/ai-recommendations.js"></script>
+<script src="../js/calculators.js"></script>
+<script src="../js/diet.js"></script>
+<script src="../js/workout.js"></script>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Management — Iron Edge Fitness Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body data-admin-page="products">
+
+  <div class="ie-admin-shell">
+    <div id="ie-sidebar-slot"></div>
+
+    <main class="ie-admin-main">
+      <div class="ie-admin-topbar">
+        <div>
+          <h1>Product Management</h1>
+          <p>Add, edit, and stock-manage everything sold in the Iron Edge Shop.</p>
+        </div>
+      </div>
+
+      <!-- ================================ CATEGORIES ================================ -->
+      <div class="ie-admin-card">
+        <div class="ie-admin-card__head">
+          <div><h2>Categories</h2><p>Shop categories (Firestore-backed)</p></div>
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="ie-btn ie-btn-ghost ie-btn-sm" id="ie-seed-categories-btn"><i class="fa-solid fa-download"></i> Seed From Defaults</button>
+            <button type="button" class="ie-btn ie-btn-primary ie-btn-sm" id="ie-add-category-btn"><i class="fa-solid fa-plus"></i> Add Category</button>
+          </div>
+        </div>
+        <div id="ie-categories-list" style="display:flex; flex-wrap:wrap; gap:10px;">
+          <p style="color:var(--ie-text-muted); font-size:0.85rem;">Loading…</p>
+        </div>
+      </div>
+
+      <!-- ================================= PRODUCTS ================================= -->
+      <div class="ie-admin-card">
+        <div class="ie-admin-card__head">
+          <div><h2>Products</h2><p>Inventory, pricing, and discounts</p></div>
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="ie-btn ie-btn-ghost ie-btn-sm" id="ie-seed-products-btn"><i class="fa-solid fa-download"></i> Seed From Defaults</button>
+            <button type="button" class="ie-btn ie-btn-primary ie-btn-sm" id="ie-add-product-btn"><i class="fa-solid fa-plus"></i> Add Product</button>
+          </div>
+        </div>
+
+        <div class="ie-admin-toolbar">
+          <div class="ie-admin-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="ie-product-search" placeholder="Search products…" autocomplete="off">
+          </div>
+          <select class="ie-admin-filter-select" id="ie-product-category-filter">
+            <option value="all">All Categories</option>
+          </select>
+        </div>
+
+        <div class="ie-admin-table-wrap">
+          <table class="ie-admin-table">
+            <thead>
+              <tr><th>Product</th><th>Category</th><th>Price</th><th>Discount</th><th>Stock</th><th>Rating</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="ie-products-table-body">
+              <tr class="ie-admin-empty-row"><td colspan="7">No products yet — click "Seed From Defaults" to import the storefront catalog.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ============================== PRODUCT MODAL ============================== -->
+  <div class="ie-admin-modal" id="ie-product-edit-modal">
+    <div class="ie-glass ie-admin-modal-panel ie-admin-modal-panel--wide">
+      <button type="button" class="ie-icon-btn ie-admin-modal-close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <h2 id="ie-product-modal-title">Add Product</h2>
+      <div class="ie-form-banner" data-form-banner role="alert"></div>
+      <form id="ie-product-form" novalidate>
+        <input type="hidden" id="ie-product-original-id">
+        <div class="ie-field-row ie-field-row--2">
+          <div class="ie-field">
+            <label for="ie-product-id">Product ID (slug)</label>
+            <input type="text" id="ie-product-id" required>
+          </div>
+          <div class="ie-field">
+            <label for="ie-product-name">Name</label>
+            <input type="text" id="ie-product-name" required>
+          </div>
+        </div>
+        <div class="ie-field-row ie-field-row--2">
+          <div class="ie-field">
+            <label for="ie-product-category">Category</label>
+            <select id="ie-product-category"></select>
+          </div>
+          <div class="ie-field">
+            <label for="ie-product-brand">Brand</label>
+            <input type="text" id="ie-product-brand" value="Iron Edge Labs">
+          </div>
+        </div>
+        <div class="ie-field-row ie-field-row--2">
+          <div class="ie-field">
+            <label for="ie-product-price">Price ($)</label>
+            <input type="number" id="ie-product-price" min="0" step="0.01" required>
+          </div>
+          <div class="ie-field">
+            <label for="ie-product-discount">Discount %</label>
+            <input type="number" id="ie-product-discount" min="0" max="90" value="0">
+          </div>
+        </div>
+        <div class="ie-field-row ie-field-row--2">
+          <div class="ie-field">
+            <label for="ie-product-stock">Stock Status</label>
+            <select id="ie-product-stock">
+              <option value="in-stock">In Stock</option>
+              <option value="low-stock">Low Stock</option>
+              <option value="out-of-stock">Out of Stock</option>
+            </select>
+          </div>
+          <div class="ie-field">
+            <label for="ie-product-image">Image URL</label>
+            <input type="text" id="ie-product-image" placeholder="https://…">
+          </div>
+        </div>
+        <div class="ie-field">
+          <label for="ie-product-description">Description</label>
+          <textarea id="ie-product-description" rows="3"></textarea>
+        </div>
+        <button type="submit" class="ie-btn ie-btn-primary" data-submit-btn style="width:100%;">
+          <span class="ie-btn-label"><i class="fa-solid fa-floppy-disk"></i> Save Product</span>
+          <span class="ie-btn-spinner"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================= CATEGORY MODAL ============================== -->
+  <div class="ie-admin-modal" id="ie-category-modal">
+    <div class="ie-glass ie-admin-modal-panel">
+      <button type="button" class="ie-icon-btn ie-admin-modal-close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <h2>Add Category</h2>
+      <form id="ie-category-form" novalidate>
+        <div class="ie-field">
+          <label for="ie-category-id">Category ID (slug)</label>
+          <input type="text" id="ie-category-id" required>
+        </div>
+        <div class="ie-field">
+          <label for="ie-category-name">Name</label>
+          <input type="text" id="ie-category-name" required>
+        </div>
+        <div class="ie-field">
+          <label for="ie-category-icon">Font Awesome icon class</label>
+          <input type="text" id="ie-category-icon" placeholder="fa-solid fa-cubes" value="fa-solid fa-cubes">
+        </div>
+        <button type="submit" class="ie-btn ie-btn-primary" style="width:100%;"><i class="fa-solid fa-floppy-disk"></i> Save Category</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="ie-toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="ie-toast-text">Updated</span>
+  </div>
+
+  <script src="../js/admin.js" type="module"></script>
+
+  <script type="module">
+    import {
+      getAdminProducts, addProduct, updateProduct, deleteProduct, seedProductsFromCatalog,
+      getAdminCategories, addCategory, deleteCategory, seedCategoriesFromCatalog,
+    } from '../firebase/admin.js';
+    import { PRODUCTS, CATEGORIES } from '../js/product-data.js';
+
+    const $ = (s, ctx = document) => ctx.querySelector(s);
+    const $$ = (s, ctx = document) => Array.from(ctx.querySelectorAll(s));
+    const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n || 0);
+
+    let products = [];
+    let categories = [];
+    let filters = { term: '', category: 'all' };
+
+    const stockTone = { 'in-stock': 'success', 'low-stock': 'warning', 'out-of-stock': 'danger' };
+
+    /* -------------------------------------------------------------- categories */
+    async function renderCategories() {
+      categories = await getAdminCategories();
+      const list = $('#ie-categories-list');
+      const catSelect = $('#ie-product-category');
+      const catFilter = $('#ie-product-category-filter');
+
+      if (!categories.length) {
+        list.innerHTML = `<p style="color:var(--ie-text-muted); font-size:0.85rem;">No categories yet — click "Seed From Defaults".</p>`;
+      } else {
+        list.innerHTML = categories
+          .map((c) => `
+            <span class="ie-badge" data-tone="neutral" style="padding:8px 14px; gap:8px;">
+              <i class="${c.icon}"></i> ${c.name}
+              <button type="button" data-delete-category="${c.id}" style="background:none;border:none;color:var(--ie-danger);margin-left:4px;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </span>`)
+          .join('');
+        $$('[data-delete-category]', list).forEach((btn) =>
+          btn.addEventListener('click', async () => {
+            if (!confirm('Delete this category?')) return;
+            await deleteCategory(btn.dataset.deleteCategory);
+            window.IEAdmin.toast('Category deleted');
+            await renderCategories();
+          })
+        );
+      }
+
+      catSelect.innerHTML = categories.map((c) => `<option value="${c.id}">${c.name}</option>`).join('');
+      catFilter.innerHTML = `<option value="all">All Categories</option>` + categories.map((c) => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+
+    $('#ie-add-category-btn').addEventListener('click', () => window.IEAdmin.openModal('ie-category-modal'));
+    $('#ie-category-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = $('#ie-category-id').value.trim().toLowerCase().replace(/\s+/g, '-');
+      await addCategory(id, { id, name: $('#ie-category-name').value.trim(), icon: $('#ie-category-icon').value.trim() });
+      window.IEAdmin.closeModal('ie-category-modal');
+      window.IEAdmin.toast('Category added');
+      e.target.reset();
+      await renderCategories();
+    });
+    $('#ie-seed-categories-btn').addEventListener('click', async () => {
+      await seedCategoriesFromCatalog(CATEGORIES);
+      window.IEAdmin.toast('Default categories seeded');
+      await renderCategories();
+    });
+
+    /* ---------------------------------------------------------------- products */
+    function applyFilters() {
+      return products.filter((p) => {
+        const matchesTerm = !filters.term || p.name.toLowerCase().includes(filters.term);
+        const matchesCat = filters.category === 'all' || p.category === filters.category;
+        return matchesTerm && matchesCat;
+      });
+    }
+
+    function renderProductsTable() {
+      const rows = applyFilters();
+      const body = $('#ie-products-table-body');
+      if (!rows.length) {
+        body.innerHTML = `<tr class="ie-admin-empty-row"><td colspan="7">No products yet — click "Seed From Defaults" to import the storefront catalog.</td></tr>`;
+        return;
+      }
+      body.innerHTML = rows
+        .map((p) => `
+        <tr>
+          <td class="ie-td-wrap"><strong>${p.name}</strong><br><span style="color:var(--ie-ash); font-size:0.76rem;">${p.brand || ''}</span></td>
+          <td>${categories.find((c) => c.id === p.category)?.name || p.category}</td>
+          <td>${money(p.price)}</td>
+          <td>${p.discountPercent ? `${p.discountPercent}%` : '—'}</td>
+          <td>
+            <select class="ie-admin-filter-select" data-stock-select="${p.id}" style="height:34px; font-size:0.76rem;">
+              <option value="in-stock" ${p.stock === 'in-stock' ? 'selected' : ''}>In Stock</option>
+              <option value="low-stock" ${p.stock === 'low-stock' ? 'selected' : ''}>Low Stock</option>
+              <option value="out-of-stock" ${p.stock === 'out-of-stock' ? 'selected' : ''}>Out of Stock</option>
+            </select>
+          </td>
+          <td>${p.rating ?? '—'} <i class="fa-solid fa-star" style="color:var(--ie-orange-400); font-size:0.7rem;"></i></td>
+          <td>
+            <div class="ie-table-actions">
+              <button type="button" class="ie-table-action-btn" data-edit-product="${p.id}" aria-label="Edit"><i class="fa-solid fa-pen"></i></button>
+              <button type="button" class="ie-table-action-btn" data-delete-product="${p.id}" aria-label="Delete"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>`)
+        .join('');
+
+      $$('[data-stock-select]', body).forEach((sel) =>
+        sel.addEventListener('change', async () => {
+          await updateProduct(sel.dataset.stockSelect, { stock: sel.value });
+          window.IEAdmin.toast('Stock updated');
+          await loadProducts();
+        })
+      );
+      $$('[data-edit-product]', body).forEach((btn) => btn.addEventListener('click', () => openProductModal(products.find((p) => p.id === btn.dataset.editProduct))));
+      $$('[data-delete-product]', body).forEach((btn) =>
+        btn.addEventListener('click', async () => {
+          if (!confirm('Delete this product from the catalog?')) return;
+          await deleteProduct(btn.dataset.deleteProduct);
+          window.IEAdmin.toast('Product deleted');
+          await loadProducts();
+        })
+      );
+    }
+
+    function openProductModal(product) {
+      $('#ie-product-modal-title').textContent = product ? 'Edit Product' : 'Add Product';
+      $('#ie-product-original-id').value = product?.id || '';
+      $('#ie-product-id').value = product?.id || '';
+      $('#ie-product-id').disabled = !!product;
+      $('#ie-product-name').value = product?.name || '';
+      $('#ie-product-category').value = product?.category || categories[0]?.id || '';
+      $('#ie-product-brand').value = product?.brand || 'Iron Edge Labs';
+      $('#ie-product-price').value = product?.price || '';
+      $('#ie-product-discount').value = product?.discountPercent || 0;
+      $('#ie-product-stock').value = product?.stock || 'in-stock';
+      $('#ie-product-image').value = product?.images?.[0] || '';
+      $('#ie-product-description').value = product?.description || '';
+      window.IEAdmin.openModal('ie-product-edit-modal');
+    }
+
+    $('#ie-add-product-btn').addEventListener('click', () => openProductModal(null));
+
+    $('#ie-product-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const originalId = $('#ie-product-original-id').value;
+      const id = $('#ie-product-id').value.trim().toLowerCase().replace(/\s+/g, '-');
+      const image = $('#ie-product-image').value.trim() || 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=800&q=80';
+      const data = {
+        id,
+        name: $('#ie-product-name').value.trim(),
+        category: $('#ie-product-category').value,
+        brand: $('#ie-product-brand').value.trim(),
+        price: parseFloat($('#ie-product-price').value) || 0,
+        discountPercent: parseInt($('#ie-product-discount').value, 10) || 0,
+        stock: $('#ie-product-stock').value,
+        images: [image],
+        description: $('#ie-product-description').value.trim(),
+        rating: 0,
+        reviewCount: 0,
+        highlights: [],
+        reviews: [],
+      };
+      if (originalId) await updateProduct(originalId, data);
+      else await addProduct(id, data);
+
+      window.IEAdmin.closeModal('ie-product-edit-modal');
+      window.IEAdmin.toast('Product saved');
+      await loadProducts();
+    });
+
+    $('#ie-seed-products-btn').addEventListener('click', async () => {
+      await seedProductsFromCatalog(PRODUCTS);
+      window.IEAdmin.toast('Default products seeded');
+      await loadProducts();
+    });
+
+    $('#ie-product-search').addEventListener('input', (e) => { filters.term = e.target.value.toLowerCase(); renderProductsTable(); });
+    $('#ie-product-category-filter').addEventListener('change', (e) => { filters.category = e.target.value; renderProductsTable(); });
+
+    async function loadProducts() {
+      products = await getAdminProducts();
+      renderProductsTable();
+    }
+
+    (async () => {
+      const session = await window.IEAdmin.requireAdmin();
+      if (!session) return;
+      await renderCategories();
+      await loadProducts();
+    })();
+  </script>
+</body>
+</html>

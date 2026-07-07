@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Management — Iron Edge Fitness Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body data-admin-page="users">
+
+  <div class="ie-admin-shell">
+    <div id="ie-sidebar-slot"></div>
+
+    <main class="ie-admin-main">
+      <div class="ie-admin-topbar">
+        <div>
+          <h1>User Management</h1>
+          <p>View, search, edit, suspend, or remove member accounts.</p>
+        </div>
+        <div class="ie-admin-topbar-actions">
+          <button type="button" class="ie-btn ie-btn-ghost ie-btn-sm" id="ie-export-users-btn">
+            <i class="fa-solid fa-file-arrow-down"></i> Export CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="ie-admin-card">
+        <div class="ie-admin-toolbar">
+          <div class="ie-admin-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="ie-user-search" placeholder="Search by name or email…" autocomplete="off">
+          </div>
+          <select class="ie-admin-filter-select" id="ie-user-role-filter">
+            <option value="all">All Roles</option>
+            <option value="member">Member</option>
+            <option value="admin">Admin</option>
+          </select>
+          <select class="ie-admin-filter-select" id="ie-user-status-filter">
+            <option value="all">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+          </select>
+        </div>
+
+        <div class="ie-admin-table-wrap">
+          <table class="ie-admin-table">
+            <thead>
+              <tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="ie-users-table-body">
+              <tr class="ie-admin-empty-row"><td colspan="6">Loading users…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ============================= VIEW DETAILS MODAL ============================= -->
+  <div class="ie-admin-modal" id="ie-user-view-modal">
+    <div class="ie-glass ie-admin-modal-panel ie-admin-modal-panel--wide">
+      <button type="button" class="ie-icon-btn ie-admin-modal-close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <h2>User Details</h2>
+      <div id="ie-user-view-body">Loading…</div>
+    </div>
+  </div>
+
+  <!-- ================================ EDIT USER MODAL ================================ -->
+  <div class="ie-admin-modal" id="ie-user-edit-modal">
+    <div class="ie-glass ie-admin-modal-panel">
+      <button type="button" class="ie-icon-btn ie-admin-modal-close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <h2>Edit User</h2>
+      <div class="ie-form-banner" data-form-banner role="alert"></div>
+      <form id="ie-user-edit-form" novalidate>
+        <input type="hidden" id="ie-edit-uid">
+        <div class="ie-field">
+          <label for="ie-edit-name">Full name</label>
+          <input type="text" id="ie-edit-name" required>
+        </div>
+        <div class="ie-field-row ie-field-row--2">
+          <div class="ie-field">
+            <label for="ie-edit-role">Role</label>
+            <select id="ie-edit-role">
+              <option value="member">Member</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="ie-field">
+            <label for="ie-edit-status">Status</label>
+            <select id="ie-edit-status">
+              <option value="active">Active</option>
+              <option value="suspended">Suspended</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="ie-btn ie-btn-primary" data-submit-btn style="width:100%;">
+          <span class="ie-btn-label"><i class="fa-solid fa-floppy-disk"></i> Save Changes</span>
+          <span class="ie-btn-spinner"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="ie-toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="ie-toast-text">Updated</span>
+  </div>
+
+  <script src="../js/admin.js" type="module"></script>
+
+  <script type="module">
+    import { listAllUsers, updateUserRecord, suspendUser, activateUser, deleteUserRecord } from '../firebase/admin.js';
+    import { getUserMembership, computeMembershipStatus, getPaymentHistory, PLAN_CATALOG } from '../js/firebase.js';
+
+    const $ = (s, ctx = document) => ctx.querySelector(s);
+    const $$ = (s, ctx = document) => Array.from(ctx.querySelectorAll(s));
+    const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n || 0);
+    const fmtDate = (ts) => (ts?.toDate ? ts.toDate().toLocaleDateString() : '—');
+
+    let allUsers = [];
+    let filters = { term: '', role: 'all', status: 'all' };
+
+    function applyFilters() {
+      return allUsers.filter((u) => {
+        const matchesTerm = !filters.term || (u.name || '').toLowerCase().includes(filters.term) || (u.email || '').toLowerCase().includes(filters.term);
+        const matchesRole = filters.role === 'all' || (u.role || 'member') === filters.role;
+        const matchesStatus = filters.status === 'all' || (u.status || 'active') === filters.status;
+        return matchesTerm && matchesRole && matchesStatus;
+      });
+    }
+
+    function renderTable() {
+      const rows = applyFilters();
+      const body = $('#ie-users-table-body');
+      if (!rows.length) {
+        body.innerHTML = `<tr class="ie-admin-empty-row"><td colspan="6">No users match your filters.</td></tr>`;
+        return;
+      }
+      body.innerHTML = rows
+        .map((u) => {
+          const roleTone = u.role === 'admin' ? 'brand' : 'neutral';
+          const statusTone = u.status === 'suspended' ? 'danger' : 'success';
+          return `
+          <tr>
+            <td><span class="ie-table-avatar">${(u.name || '?')[0]?.toUpperCase()}</span>${u.name || 'Unnamed'}</td>
+            <td>${u.email || '—'}</td>
+            <td><span class="ie-badge" data-tone="${roleTone}">${u.role || 'member'}</span></td>
+            <td><span class="ie-badge" data-tone="${statusTone}">${u.status || 'active'}</span></td>
+            <td>${fmtDate(u.createdAt)}</td>
+            <td>
+              <div class="ie-table-actions">
+                <button type="button" class="ie-table-action-btn" data-action="view" data-uid="${u.id}" aria-label="View"><i class="fa-solid fa-eye"></i></button>
+                <button type="button" class="ie-table-action-btn" data-action="edit" data-uid="${u.id}" aria-label="Edit"><i class="fa-solid fa-pen"></i></button>
+                <button type="button" class="ie-table-action-btn" data-action="toggle-status" data-uid="${u.id}" data-status="${u.status || 'active'}" aria-label="Suspend or activate">
+                  <i class="fa-solid ${u.status === 'suspended' ? 'fa-user-check' : 'fa-user-slash'}"></i>
+                </button>
+                <button type="button" class="ie-table-action-btn" data-action="delete" data-uid="${u.id}" aria-label="Delete"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>`;
+        })
+        .join('');
+
+      $$('[data-action="view"]', body).forEach((btn) => btn.addEventListener('click', () => openViewModal(btn.dataset.uid)));
+      $$('[data-action="edit"]', body).forEach((btn) => btn.addEventListener('click', () => openEditModal(btn.dataset.uid)));
+      $$('[data-action="toggle-status"]', body).forEach((btn) =>
+        btn.addEventListener('click', async () => {
+          const uid = btn.dataset.uid;
+          if (btn.dataset.status === 'suspended') await activateUser(uid);
+          else await suspendUser(uid);
+          window.IEAdmin.toast(btn.dataset.status === 'suspended' ? 'User activated' : 'User suspended');
+          await loadUsers();
+        })
+      );
+      $$('[data-action="delete"]', body).forEach((btn) =>
+        btn.addEventListener('click', async () => {
+          if (!confirm('Remove this user\'s profile? This does not delete their login account (see firebase/admin.js notes) — it only removes them from admin views.')) return;
+          await deleteUserRecord(btn.dataset.uid);
+          window.IEAdmin.toast('User profile removed');
+          await loadUsers();
+        })
+      );
+    }
+
+    async function openViewModal(uid) {
+      const user = allUsers.find((u) => u.id === uid);
+      $('#ie-user-view-body').innerHTML = 'Loading membership &amp; payment history…';
+      window.IEAdmin.openModal('ie-user-view-modal');
+
+      const [membership, payments] = await Promise.all([getUserMembership(uid), getPaymentHistory(uid)]);
+      const status = computeMembershipStatus(membership);
+      const planName = membership ? PLAN_CATALOG[membership.plan]?.name || membership.plan : 'None';
+
+      $('#ie-user-view-body').innerHTML = `
+        <div class="ie-field-row ie-field-row--2" style="margin-bottom:20px;">
+          <div><p style="font-size:0.78rem; color:var(--ie-ash); text-transform:uppercase;">Name</p><p style="font-weight:700;">${user?.name || '—'}</p></div>
+          <div><p style="font-size:0.78rem; color:var(--ie-ash); text-transform:uppercase;">Email</p><p style="font-weight:700;">${user?.email || '—'}</p></div>
+        </div>
+        <div class="ie-field-row ie-field-row--2" style="margin-bottom:24px;">
+          <div><p style="font-size:0.78rem; color:var(--ie-ash); text-transform:uppercase;">Membership Plan</p><p style="font-weight:700;">${planName}</p></div>
+          <div><p style="font-size:0.78rem; color:var(--ie-ash); text-transform:uppercase;">Status</p><span class="ie-badge" data-tone="${status.state === 'active' ? 'success' : 'neutral'}">${status.state}</span></div>
+        </div>
+        <h3 style="font-size:0.95rem; margin-bottom:10px;">Payment History</h3>
+        <div class="ie-admin-table-wrap">
+          <table class="ie-admin-table">
+            <thead><tr><th>Invoice</th><th>Plan</th><th>Amount</th><th>Date</th></tr></thead>
+            <tbody>
+              ${payments.length
+                ? payments.map((p) => `<tr><td>${p.invoiceId}</td><td>${PLAN_CATALOG[p.plan]?.name || p.plan}</td><td>${money(p.total)}</td><td>${fmtDate(p.createdAt)}</td></tr>`).join('')
+                : `<tr class="ie-admin-empty-row"><td colspan="4">No payments yet.</td></tr>`}
+            </tbody>
+          </table>
+        </div>`;
+    }
+
+    function openEditModal(uid) {
+      const user = allUsers.find((u) => u.id === uid);
+      if (!user) return;
+      $('#ie-edit-uid').value = uid;
+      $('#ie-edit-name').value = user.name || '';
+      $('#ie-edit-role').value = user.role || 'member';
+      $('#ie-edit-status').value = user.status || 'active';
+      window.IEAdmin.openModal('ie-user-edit-modal');
+    }
+
+    $('#ie-user-edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const uid = $('#ie-edit-uid').value;
+      await updateUserRecord(uid, {
+        name: $('#ie-edit-name').value.trim(),
+        role: $('#ie-edit-role').value,
+        status: $('#ie-edit-status').value,
+      });
+      window.IEAdmin.closeModal('ie-user-edit-modal');
+      window.IEAdmin.toast('User updated');
+      await loadUsers();
+    });
+
+    $('#ie-user-search').addEventListener('input', (e) => { filters.term = e.target.value.toLowerCase(); renderTable(); });
+    $('#ie-user-role-filter').addEventListener('change', (e) => { filters.role = e.target.value; renderTable(); });
+    $('#ie-user-status-filter').addEventListener('change', (e) => { filters.status = e.target.value; renderTable(); });
+
+    $('#ie-export-users-btn').addEventListener('click', () => {
+      const rows = applyFilters().map((u) => ({
+        Name: u.name || '', Email: u.email || '', Role: u.role || 'member',
+        Status: u.status || 'active', Joined: fmtDate(u.createdAt),
+      }));
+      window.IEAdmin.exportToCSV('iron-edge-users', rows);
+    });
+
+    async function loadUsers() {
+      allUsers = await listAllUsers();
+      renderTable();
+    }
+
+    (async () => {
+      const session = await window.IEAdmin.requireAdmin();
+      if (!session) return;
+      await loadUsers();
+    })();
+  </script>
+</body>
+</html>

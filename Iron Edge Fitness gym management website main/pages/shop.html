@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop — Iron Edge Fitness</title>
+<meta name="description" content="Shop supplements, protein powder, pre-workout, creatine, vitamins, accessories, equipment and apparel from Iron Edge Fitness.">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/shop.css">
+</head>
+<body data-page="shop" data-components-base="../components/">
+
+  <div id="ie-loader-slot"></div>
+  <div id="ie-navbar-slot"></div>
+
+  <main>
+    <!-- ============================== HERO / TOOLBAR ============================== -->
+    <section id="ie-shop-hero">
+      <div class="ie-container">
+        <p class="ie-eyebrow" data-reveal>Iron Edge Shop</p>
+        <h1 class="ie-heading-lg" data-reveal>Fuel the <span class="ie-text-gradient">work</span></h1>
+        <p class="ie-lead" data-reveal>Supplements, gear and apparel picked to match how you actually train.</p>
+
+        <div class="ie-shop-toolbar" data-reveal>
+          <div class="ie-shop-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="ie-shop-search-input" placeholder="Search products, brands…" autocomplete="off">
+          </div>
+          <select class="ie-sort-select" id="ie-shop-sort">
+            <option value="featured">Sort: Featured</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Highest Rated</option>
+          </select>
+        </div>
+
+        <div class="ie-category-rail" id="ie-category-rail" data-reveal>
+          <button type="button" class="ie-category-chip is-active" data-category="all">
+            <i class="fa-solid fa-border-all"></i> All
+          </button>
+          <!-- Remaining category chips are injected by js/shop.js from js/product-data.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================== PRODUCT GRID =============================== -->
+    <section class="ie-section" style="padding-top:24px;">
+      <div class="ie-container">
+        <div class="ie-shop-sort-row" style="margin-bottom:20px;">
+          <p class="ie-shop-result-count" id="ie-shop-result-count">Loading products…</p>
+        </div>
+
+        <div class="ie-product-grid" id="ie-product-grid">
+          <!-- Product cards injected by js/shop.js -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="ie-footer-slot"></div>
+  <div id="ie-chat-slot"></div>
+
+  <!-- ================================ PRODUCT MODAL ================================ -->
+  <div id="ie-product-modal" role="dialog" aria-modal="true" aria-label="Product details">
+    <div class="ie-glass ie-modal-panel">
+      <button type="button" class="ie-icon-btn ie-modal-close" id="ie-modal-close" aria-label="Close product details">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="ie-modal-grid" id="ie-modal-body">
+        <!-- Fully injected by js/shop.js when a product is opened -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================== TOAST ==================================== -->
+  <div id="ie-toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="ie-toast-text">Added to cart</span>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.js"></script>
+  <script src="../js/main.js"></script>
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/shop.js"></script>
+</body>
+</html>

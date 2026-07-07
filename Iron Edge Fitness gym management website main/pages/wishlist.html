@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wishlist — Iron Edge Fitness</title>
+<meta name="description" content="Your saved Iron Edge Fitness products — pick up where you left off and move items to your cart.">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="../css/themes.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/shop.css">
+</head>
+<body data-page="wishlist" data-components-base="../components/">
+
+  <div id="ie-loader-slot"></div>
+  <div id="ie-navbar-slot"></div>
+
+  <main>
+    <section id="ie-shop-hero" style="padding-bottom:12px;">
+      <div class="ie-container">
+        <p class="ie-eyebrow" data-reveal>Saved For Later</p>
+        <h1 class="ie-heading-lg" data-reveal>Your <span class="ie-text-gradient">wishlist</span></h1>
+        <p class="ie-lead" data-reveal>Everything you've bookmarked, in one place — add it to your cart whenever you're ready.</p>
+      </div>
+    </section>
+
+    <section class="ie-section" style="padding-top:24px;">
+      <div class="ie-container">
+        <div class="ie-shop-sort-row" style="margin-bottom:20px;">
+          <p class="ie-shop-result-count" id="ie-wishlist-count">Loading your wishlist…</p>
+        </div>
+
+        <div class="ie-wishlist-grid" id="ie-wishlist-grid" data-reveal>
+          <!-- Wishlist product cards (or empty state) injected by js/shop.js -->
+          <div class="ie-empty-wishlist" style="grid-column:1/-1;">
+            <i class="fa-solid fa-heart-crack"></i>
+            <p>Loading…</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="ie-footer-slot"></div>
+  <div id="ie-chat-slot"></div>
+
+  <!-- Product modal reused so wishlist items can be inspected without leaving the page -->
+  <div id="ie-product-modal" role="dialog" aria-modal="true" aria-label="Product details">
+    <div class="ie-glass ie-modal-panel">
+      <button type="button" class="ie-icon-btn ie-modal-close" id="ie-modal-close" aria-label="Close product details">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="ie-modal-grid" id="ie-modal-body"></div>
+    </div>
+  </div>
+
+  <div id="ie-toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="ie-toast-text">Updated wishlist</span>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.js"></script>
+  <script src="../js/main.js"></script>
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/shop.js"></script>
+</body>
+</html>
